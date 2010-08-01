@@ -814,7 +814,9 @@
 {
 	if (controllers != _viewControllers) {
 		for (UIViewController *controller in _viewControllers) {
-			[controller.view removeFromSuperview];
+			if ([controller isKindOfClass:[UIViewController class]]) {
+				[controller.view removeFromSuperview];
+			}
 		}
 		[_viewControllers release];
 		_viewControllers = [[NSMutableArray alloc] initWithCapacity:2];
