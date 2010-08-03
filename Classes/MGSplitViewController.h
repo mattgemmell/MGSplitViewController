@@ -22,6 +22,7 @@ typedef enum _MGSplitViewDividerStyle {
 	float _splitWidth;
 	id _delegate;
 	BOOL _vertical;
+	BOOL _masterBeforeDetail;
 	NSMutableArray *_viewControllers;
 	UIBarButtonItem *_barButtonItem; // To be compliant with wacky UISplitViewController behaviour.
     UIPopoverController *_hiddenPopoverController; // Popover used to hold the master view if it's not always visible.
@@ -36,7 +37,8 @@ typedef enum _MGSplitViewDividerStyle {
 @property (nonatomic, assign) BOOL showsMasterInPortrait; // applies to both portrait orientations (default NO)
 @property (nonatomic, assign) BOOL showsMasterInLandscape; // applies to both landscape orientations (default YES)
 @property (nonatomic, assign, getter=isVertical) BOOL vertical; // if NO, split is horizontal, i.e. master above detail (default YES)
-@property (nonatomic, assign) float splitPosition; // starting position of split in pixels, relative to top or left (depending on .isVertical setting).
+@property (nonatomic, assign, getter=isMasterBeforeDetail) BOOL masterBeforeDetail; // if NO, master view is below/right of detail (default YES)
+@property (nonatomic, assign) float splitPosition; // starting position of split in pixels, relative to top/left (depending on .isVertical setting) if masterBeforeDetail is YES, else relative to bottom/right.
 @property (nonatomic, assign) float splitWidth; // width of split in pixels.
 @property (nonatomic, assign) BOOL allowsDraggingDivider; // whether to let the user drag the divider to alter the split position (default NO).
 
@@ -50,6 +52,7 @@ typedef enum _MGSplitViewDividerStyle {
 
 // Actions
 - (IBAction)toggleSplitOrientation:(id)sender; // toggles split axis between vertical (left/right; default) and horizontal (top/bottom).
+- (IBAction)toggleMasterBeforeDetail:(id)sender; // toggles position of master view relative to detail view.
 - (IBAction)toggleMasterView:(id)sender; // toggles display of the master view in the current orientation.
 - (IBAction)showMasterPopover:(id)sender; // shows the master view in a popover spawned from the provided barButtonItem, if it's currently hidden.
 - (void)notePopoverDismissed; // should rarely be needed, because you should not change the popover's delegate. If you must, then call this when it's dismissed.
@@ -57,6 +60,15 @@ typedef enum _MGSplitViewDividerStyle {
 // Conveniences for you, because I care.
 - (BOOL)isShowingMaster;
 - (void)setSplitPosition:(float)posn animated:(BOOL)animate; // Allows for animation of splitPosition changes. The property's regular setter is not animated.
+/* Note:	splitPosition is the width (in a left/right split, or height in a top/bottom split) of the master view.
+			It is relative to the appropriate side of the splitView, which can be any of the four sides depending on the values in isMasterBeforeDetail and isVertical:
+				isVertical = YES, isMasterBeforeDetail = YES: splitPosition is relative to the LEFT edge. (Default)
+				isVertical = YES, isMasterBeforeDetail = NO: splitPosition is relative to the RIGHT edge.
+ 				isVertical = NO, isMasterBeforeDetail = YES: splitPosition is relative to the TOP edge.
+ 				isVertical = NO, isMasterBeforeDetail = NO: splitPosition is relative to the BOTTOM edge.
+
+			This implementation was chosen so you don't need to recalculate equivalent splitPositions if the user toggles masterBeforeDetail themselves.
+ */
 - (void)setDividerStyle:(MGSplitViewDividerStyle)newStyle animated:(BOOL)animate; // Allows for animation of dividerStyle changes. The property's regular setter is not animated.
 - (NSArray *)cornerViews;
 /*

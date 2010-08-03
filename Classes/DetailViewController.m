@@ -52,6 +52,7 @@
 	toggleItem.title = ([splitController isShowingMaster]) ? @"Hide Master" : @"Show Master"; // "I... AM... THE MASTER!" Derek Jacobi. Gave me chills.
 	verticalItem.title = (splitController.vertical) ? @"Horizontal Split" : @"Vertical Split";
 	dividerStyleItem.title = (splitController.dividerStyle == MGSplitViewDividerStyleThin) ? @"Enable Dragging" : @"Disable Dragging";
+	masterBeforeDetailItem.title = (splitController.masterBeforeDetail) ? @"Detail First" : @"Master First";
 }
 
 
@@ -143,6 +144,13 @@
 {
 	MGSplitViewDividerStyle newStyle = ((splitController.dividerStyle == MGSplitViewDividerStyleThin) ? MGSplitViewDividerStylePaneSplitter : MGSplitViewDividerStyleThin);
 	[splitController setDividerStyle:newStyle animated:YES];
+	[self configureView];
+}
+
+
+- (IBAction)toggleMasterBeforeDetail:(id)sender
+{
+	[splitController toggleMasterBeforeDetail:sender];
 	[self configureView];
 }
 

@@ -93,6 +93,12 @@
 								<int key="IBUIStyle">1</int>
 								<reference key="IBUIToolbar" ref="410698538"/>
 							</object>
+							<object class="IBUIBarButtonItem" id="857868355">
+								<string key="IBUITitle">Detail First</string>
+								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+								<int key="IBUIStyle">1</int>
+								<reference key="IBUIToolbar" ref="410698538"/>
+							</object>
 						</object>
 					</object>
 				</object>
@@ -181,6 +187,22 @@
 					</object>
 					<int key="connectionID">76</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">masterBeforeDetailItem</string>
+						<reference key="source" ref="841351856"/>
+						<reference key="destination" ref="857868355"/>
+					</object>
+					<int key="connectionID">78</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">toggleMasterBeforeDetail:</string>
+						<reference key="source" ref="857868355"/>
+						<reference key="destination" ref="841351856"/>
+					</object>
+					<int key="connectionID">79</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -225,6 +247,7 @@
 							<reference ref="364890420"/>
 							<reference ref="770212716"/>
 							<reference ref="819518362"/>
+							<reference ref="857868355"/>
 						</object>
 						<reference key="parent" ref="647120888"/>
 					</object>
@@ -243,6 +266,11 @@
 						<reference key="object" ref="819518362"/>
 						<reference key="parent" ref="410698538"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">77</int>
+						<reference key="object" ref="857868355"/>
+						<reference key="parent" ref="410698538"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -256,6 +284,7 @@
 					<string>67.IBPluginDependency</string>
 					<string>70.IBPluginDependency</string>
 					<string>74.IBPluginDependency</string>
+					<string>77.IBPluginDependency</string>
 					<string>8.IBEditorWindowLastContentRect</string>
 					<string>8.IBPluginDependency</string>
 				</object>
@@ -263,6 +292,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>DetailViewController</string>
 					<string>UIResponder</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -288,7 +318,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">76</int>
+			<int key="maxID">79</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -301,11 +331,13 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>toggleDividerStyle:</string>
+							<string>toggleMasterBeforeDetail:</string>
 							<string>toggleMasterView:</string>
 							<string>toggleVertical:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -316,6 +348,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>toggleDividerStyle:</string>
+							<string>toggleMasterBeforeDetail:</string>
 							<string>toggleMasterView:</string>
 							<string>toggleVertical:</string>
 						</object>
@@ -323,6 +356,10 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">toggleDividerStyle:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleMasterBeforeDetail:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -342,6 +379,7 @@
 							<string>detailDescriptionLabel</string>
 							<string>detailItem</string>
 							<string>dividerStyleItem</string>
+							<string>masterBeforeDetailItem</string>
 							<string>splitController</string>
 							<string>toggleItem</string>
 							<string>toolbar</string>
@@ -351,6 +389,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>UILabel</string>
 							<string>id</string>
+							<string>UIBarButtonItem</string>
 							<string>UIBarButtonItem</string>
 							<string>MGSplitViewController</string>
 							<string>UIBarButtonItem</string>
@@ -365,6 +404,7 @@
 							<string>detailDescriptionLabel</string>
 							<string>detailItem</string>
 							<string>dividerStyleItem</string>
+							<string>masterBeforeDetailItem</string>
 							<string>splitController</string>
 							<string>toggleItem</string>
 							<string>toolbar</string>
@@ -382,6 +422,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">dividerStyleItem</string>
+								<string key="candidateClassName">UIBarButtonItem</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">masterBeforeDetailItem</string>
 								<string key="candidateClassName">UIBarButtonItem</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -415,11 +459,13 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>showMasterPopover:</string>
+							<string>toggleMasterBeforeDetail:</string>
 							<string>toggleMasterView:</string>
 							<string>toggleSplitOrientation:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -430,6 +476,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>showMasterPopover:</string>
+							<string>toggleMasterBeforeDetail:</string>
 							<string>toggleMasterView:</string>
 							<string>toggleSplitOrientation:</string>
 						</object>
@@ -437,6 +484,10 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">showMasterPopover:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleMasterBeforeDetail:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

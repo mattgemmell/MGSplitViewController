@@ -14,6 +14,7 @@
 	IBOutlet UIBarButtonItem *toggleItem;
 	IBOutlet UIBarButtonItem *verticalItem;
 	IBOutlet UIBarButtonItem *dividerStyleItem;
+	IBOutlet UIBarButtonItem *masterBeforeDetailItem;
     UIPopoverController *popoverController;
     UIToolbar *toolbar;
     
@@ -28,5 +29,6 @@
 - (IBAction)toggleMasterView:(id)sender;
 - (IBAction)toggleVertical:(id)sender;
 - (IBAction)toggleDividerStyle:(id)sender;
+- (IBAction)toggleMasterBeforeDetail:(id)sender;
 
 @end

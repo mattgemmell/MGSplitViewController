@@ -21,6 +21,7 @@
 #define MG_MIN_VIEW_WIDTH				200.0	// minimum width a view is allowed to become as a result of changing the splitPosition.
 
 #define MG_ANIMATION_CHANGE_SPLIT_ORIENTATION	@"ChangeSplitOrientation"	// Animation ID for internal use.
+#define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
 
 
 @interface MGSplitViewController (MGPrivateMethods)
@@ -127,6 +128,7 @@
 	_showsMasterInLandscape = YES;
 	_reconfigurePopup = NO;
 	_vertical = YES;
+	_masterBeforeDetail = YES;
 	_splitPosition = MG_DEFAULT_SPLIT_POSITION;
 	CGRect divRect = self.view.bounds;
 	if ([self isVertical]) {
@@ -268,11 +270,43 @@
 	UIViewController *controller;
 	UIView *theView;
 	BOOL shouldShowMaster = [self shouldShowMasterForInterfaceOrientation:theOrientation];
+	BOOL masterFirst = [self isMasterBeforeDetail];
 	if ([self isVertical]) {
-		// Master on left, detail on right.
-		if (!shouldShowMaster) {
-			// Move off-screen.
-			newFrame.origin.x -= (_splitPosition + _splitWidth);
+		// Master on left, detail on right (or vice versa).
+		CGRect masterRect, dividerRect, detailRect;
+		if (masterFirst) {
+			if (!shouldShowMaster) {
+				// Move off-screen.
+				newFrame.origin.x -= (_splitPosition + _splitWidth);
+			}
+			
+			newFrame.size.width = _splitPosition;
+			masterRect = newFrame;
+			
+			newFrame.origin.x += newFrame.size.width;
+			newFrame.size.width = _splitWidth;
+			dividerRect = newFrame;
+			
+			newFrame.origin.x += newFrame.size.width;
+			newFrame.size.width = width - newFrame.origin.x;
+			detailRect = newFrame;
+			
+		} else {
+			if (!shouldShowMaster) {
+				// Move off-screen.
+				newFrame.size.width += (_splitPosition + _splitWidth);
+			}
+			
+			newFrame.size.width -= (_splitPosition + _splitWidth);
+			detailRect = newFrame;
+			
+			newFrame.origin.x += newFrame.size.width;
+			newFrame.size.width = _splitWidth;
+			dividerRect = newFrame;
+			
+			newFrame.origin.x += newFrame.size.width;
+			newFrame.size.width = _splitPosition;
+			masterRect = newFrame;
 		}
 		
 		// Position master.
@@ -280,33 +314,28 @@
 		if (controller && [controller isKindOfClass:[UIViewController class]])  {
 			theView = controller.view;
 			if (theView) {
-				newFrame.size.width = _splitPosition;
-				theView.frame = newFrame;
+				theView.frame = masterRect;
 				if (!theView.superview) {
-					[self.masterViewController viewWillAppear:NO];
+					[controller viewWillAppear:NO];
 					[self.view addSubview:theView];
-					[self.masterViewController viewDidAppear:NO];
+					[controller viewDidAppear:NO];
 				}
-				newFrame.origin.x += newFrame.size.width;
 			}
 		}
 		
 		// Position divider.
 		theView = _dividerView;
-		newFrame.size.width = _splitWidth;
-		theView.frame = newFrame;
+		theView.frame = dividerRect;
 		if (!theView.superview) {
 			[self.view addSubview:theView];
 		}
-		newFrame.origin.x += newFrame.size.width;
 		
 		// Position detail.
 		controller = self.detailViewController;
 		if (controller && [controller isKindOfClass:[UIViewController class]])  {
 			theView = controller.view;
 			if (theView) {
-				newFrame.size.width = width - newFrame.origin.x;
-				theView.frame = newFrame;
+				theView.frame = detailRect;
 				if (!theView.superview) {
 					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
 				} else {
@@ -316,10 +345,41 @@
 		}
 		
 	} else {
-		// Master above, detail below.
-		if (![self shouldShowMasterForInterfaceOrientation:theOrientation]) {
-			// Move off-screen.
-			newFrame.origin.y -= (_splitPosition + _splitWidth);
+		// Master above, detail below (or vice versa).
+		CGRect masterRect, dividerRect, detailRect;
+		if (masterFirst) {
+			if (!shouldShowMaster) {
+				// Move off-screen.
+				newFrame.origin.y -= (_splitPosition + _splitWidth);
+			}
+			
+			newFrame.size.height = _splitPosition;
+			masterRect = newFrame;
+			
+			newFrame.origin.y += newFrame.size.height;
+			newFrame.size.height = _splitWidth;
+			dividerRect = newFrame;
+			
+			newFrame.origin.y += newFrame.size.height;
+			newFrame.size.height = height - newFrame.origin.y;
+			detailRect = newFrame;
+			
+		} else {
+			if (!shouldShowMaster) {
+				// Move off-screen.
+				newFrame.size.height += (_splitPosition + _splitWidth);
+			}
+			
+			newFrame.size.height -= (_splitPosition + _splitWidth);
+			detailRect = newFrame;
+			
+			newFrame.origin.y += newFrame.size.height;
+			newFrame.size.height = _splitWidth;
+			dividerRect = newFrame;
+			
+			newFrame.origin.y += newFrame.size.height;
+			newFrame.size.height = _splitPosition;
+			masterRect = newFrame;
 		}
 		
 		// Position master.
@@ -327,33 +387,28 @@
 		if (controller && [controller isKindOfClass:[UIViewController class]])  {
 			theView = controller.view;
 			if (theView) {
-				newFrame.size.height = _splitPosition;
-				theView.frame = newFrame;
+				theView.frame = masterRect;
 				if (!theView.superview) {
-					[self.masterViewController viewWillAppear:NO];
+					[controller viewWillAppear:NO];
 					[self.view addSubview:theView];
-					[self.masterViewController viewDidAppear:NO];
+					[controller viewDidAppear:NO];
 				}
-				newFrame.origin.y += newFrame.size.height;
 			}
 		}
 		
 		// Position divider.
 		theView = _dividerView;
-		newFrame.size.height = _splitWidth;
-		theView.frame = newFrame;
+		theView.frame = dividerRect;
 		if (!theView.superview) {
 			[self.view addSubview:theView];
 		}
-		newFrame.origin.y += newFrame.size.height;
 		
 		// Position detail.
 		controller = self.detailViewController;
 		if (controller && [controller isKindOfClass:[UIViewController class]])  {
 			theView = controller.view;
 			if (theView) {
-				newFrame.size.height = height - newFrame.origin.y;
-				theView.frame = newFrame;
+				theView.frame = detailRect;
 				if (!theView.superview) {
 					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
 				} else {
@@ -397,14 +452,14 @@
 	if (_vertical) { // left/right split
 		cornersWidth = (radius * 2.0) + _splitWidth;
 		cornersHeight = radius;
-		x = ((shouldShowMaster) ? _splitPosition : (0 - _splitWidth)) - radius;
+		x = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : width - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
 		y = 0;
 		leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // top corners
 		trailingRect = CGRectMake(x, (height - cornersHeight), cornersWidth, cornersHeight); // bottom corners
 		
 	} else { // top/bottom split
 		x = 0;
-		y = ((shouldShowMaster) ? _splitPosition : (0 - _splitWidth)) - radius;
+		y = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : height - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
 		cornersWidth = radius;
 		cornersHeight = (radius * 2.0) + _splitWidth;
 		leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // left corners
@@ -521,7 +576,7 @@
 		
 	} else if (!inPopover && _hiddenPopoverController && _barButtonItem) {
 		// I know this looks strange, but it fixes a bizarre issue with UIPopoverController leaving masterViewController's views in disarray.
-		[_hiddenPopoverController presentPopoverFromBarButtonItem:_barButtonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+		[_hiddenPopoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 		
 		// Remove master from popover and destroy popover, if it exists.
 		[_hiddenPopoverController dismissPopoverAnimated:NO];
@@ -566,7 +621,9 @@
 
 - (void)animationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context
 {
-	if ([animationID isEqualToString:MG_ANIMATION_CHANGE_SPLIT_ORIENTATION] && _cornerViews) {
+	if (([animationID isEqualToString:MG_ANIMATION_CHANGE_SPLIT_ORIENTATION] || 
+		 [animationID isEqualToString:MG_ANIMATION_CHANGE_SUBVIEWS_ORDER])
+		&& _cornerViews) {
 		for (UIView *corner in _cornerViews) {
 			corner.hidden = NO;
 		}
@@ -594,6 +651,27 @@
 		[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
 	}
 	self.vertical = (!self.vertical);
+	if (showingMaster) {
+		[UIView commitAnimations];
+	}
+}
+
+
+- (IBAction)toggleMasterBeforeDetail:(id)sender
+{
+	BOOL showingMaster = [self isShowingMaster];
+	if (showingMaster) {
+		if (_cornerViews) {
+			for (UIView *corner in _cornerViews) {
+				corner.hidden = YES;
+			}
+			_dividerView.hidden = YES;
+		}
+		[UIView beginAnimations:MG_ANIMATION_CHANGE_SUBVIEWS_ORDER context:nil];
+		[UIView setAnimationDelegate:self];
+		[UIView setAnimationDidStopSelector:@selector(animationDidStop:finished:context:)];
+	}
+	self.masterBeforeDetail = (!self.masterBeforeDetail);
 	if (showingMaster) {
 		[UIView commitAnimations];
 	}
@@ -728,6 +806,28 @@
 		}
 		
 		[self layoutSubviews];
+	}
+}
+
+
+- (BOOL)isMasterBeforeDetail
+{
+	return _masterBeforeDetail;
+}
+
+
+- (void)setMasterBeforeDetail:(BOOL)flag
+{
+	if (flag != _masterBeforeDetail) {
+		if (_hiddenPopoverController && _hiddenPopoverController.popoverVisible) {
+			[_hiddenPopoverController dismissPopoverAnimated:NO];
+		}
+		
+		_masterBeforeDetail = flag;
+		
+		if ([self isShowingMaster]) {
+			[self layoutSubviews];
+		}
 	}
 }
 

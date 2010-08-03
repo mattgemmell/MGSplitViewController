@@ -187,6 +187,9 @@
 		CGPoint lastPt = [touch previousLocationInView:self];
 		CGPoint pt = [touch locationInView:self];
 		float offset = (splitViewController.vertical) ? pt.x - lastPt.x : pt.y - lastPt.y;
+		if (!splitViewController.masterBeforeDetail) {
+			offset = -offset;
+		}
 		splitViewController.splitPosition = splitViewController.splitPosition + offset;
 	}
 }

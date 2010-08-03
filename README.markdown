@@ -18,12 +18,13 @@ Features
 Please note that, since split-views are commonly used for "Master-Detail" interfaces, I call the first sub-view the "master" and the second sub-view the "detail".
 
 - By default, MGSplitViewController mimics the appearance and (complete) behaviour of UISplitViewController, including its delegate API. It accepts two UIViewControllers (or subclasses thereof).
-- Allows toggling the visibility of the master view in either interface-orientation; i.e. you can have master-detail or detail-only in either landscape and/or portrait orientations (independently, and/or interactively).
-- Allows choosing whether the split orientation is vertical (i.e. left/right, like UISplitViewController), or horizontal (master above, and detail below). You can toggle between modes interactively, with animation.
-- Allows you to choose (and change) the position of the split, i.e. the relative sizes of the master and detail views.
-- Allows you to enable dragging of the split/divider between the master and detail views, with optional constraining via a delegate method.
-- Allows you to choose the width of the split between the master and detail views.
-- Preset "divider styles": one for non-draggable UISplitViewController-like dividers, and one for draggable, thicker style with a grip-strip.
+- Allows toggling the _visibility of the master view_ in either interface-orientation; i.e. you can have master-detail or detail-only in either landscape and/or portrait orientations (independently, and/or interactively).
+- Allows choosing whether the _split orientation_ is vertical (i.e. left/right, like UISplitViewController), or horizontal (master above, and detail below). You can toggle between modes interactively, with animation.
+- Allows choosing whether the master view is _before_ (above, or to left of) the detail view, or _after_ it (below, or to the right).
+- Allows you to choose (and change) the _position_ of the split, i.e. the relative sizes of the master and detail views.
+- Allows you to enable _dragging_ of the split/divider between the master and detail views, with optional constraining via a delegate method.
+- Allows you to choose the _width of the split_ between the master and detail views.
+- Preset "_divider styles_": one for non-draggable UISplitViewController-like dividers, and one for draggable, thicker style with a grip-strip.
 - Allows you to substitute your own divider-view (an MGSplitDividerView subclass), used to draw the split between the master and detail views.
 
 
