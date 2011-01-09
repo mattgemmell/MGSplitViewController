@@ -575,7 +575,7 @@
 		_barButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Master", nil) 
 														  style:UIBarButtonItemStyleBordered 
 														 target:self 
-														 action:@selector(showMasterPopover:)];
+														 action:(self.togglesMasterPopover ? @selector(toggleMasterPopover:) : @selector(showMasterPopover:))];
 		
 		// Inform delegate of this state of affairs.
 		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willHideViewController:withBarButtonItem:forPopoverController:)]) {
@@ -713,6 +713,36 @@
 }
 
 
+- (void) setTogglesMasterPopover:(BOOL)flag {
+
+	togglesMasterPopover = flag;
+
+	if (!_barButtonItem)
+	return;
+		
+	_barButtonItem.action = flag ? @selector(toggleMasterPopover:) : @selector(showMasterPopover:);	
+
+}
+
+- (IBAction)toggleMasterPopover:(id)sender 
+{
+
+	if (!_hiddenPopoverController)
+	return;
+	
+	if (_hiddenPopoverController.popoverVisible) {
+		
+		[self hideMasterPopover:sender];
+		
+	} else {
+	
+		[self showMasterPopover:sender];
+	
+	}
+
+}
+
+
 - (IBAction)showMasterPopover:(id)sender
 {
 	if (_hiddenPopoverController && !(_hiddenPopoverController.popoverVisible)) {
@@ -726,6 +756,24 @@
 		// Show popover.
 		[_hiddenPopoverController presentPopoverFromBarButtonItem:(sender ? sender : _barButtonItem) permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 	}
+}
+
+
+- (IBAction)hideMasterPopover:(id)sender 
+{
+
+	if(_hiddenPopoverController && _hiddenPopoverController.popoverVisible) {
+		
+		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willDismissViewController:)]) {
+		
+			[(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self popoverController:_hiddenPopoverController willDismissViewController:self.masterViewController];
+		
+		}
+		
+		[_hiddenPopoverController dismissPopoverAnimated:YES];
+	
+	}
+
 }
 
 
@@ -1140,5 +1188,6 @@
 @synthesize allowsDraggingDivider;
 @synthesize dividerStyle;
 
+@synthesize togglesMasterPopover;
 
 @end
