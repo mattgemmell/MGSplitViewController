@@ -148,6 +148,8 @@
 - (void)dealloc
 {
 	_delegate = nil;
+	[masterViewController release];
+	[detailViewController release];
 	[self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 	[_viewControllers release];
 	[_barButtonItem release];
@@ -1168,10 +1170,10 @@
 @synthesize showsMasterInLandscape;
 @synthesize vertical;
 @synthesize delegate;
-@synthesize viewControllers;
+@synthesize viewControllers = _viewControllers;
 @synthesize masterViewController;
 @synthesize detailViewController;
-@synthesize dividerView;
+@synthesize dividerView = _dividerView;
 @synthesize splitPosition;
 @synthesize splitWidth;
 @synthesize allowsDraggingDivider;
