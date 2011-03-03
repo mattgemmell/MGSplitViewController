@@ -561,7 +561,11 @@
 		[self.masterViewController viewDidDisappear:NO];
 		
 		// Create and configure _barButtonItem.
-		_barButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Master", nil) 
+        NSString *barButtonItemTitle = self.masterViewController.title;
+        if (barButtonItemTitle == nil) {
+            barButtonItemTitle = @"Master";
+        }
+		_barButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(barButtonItemTitle, nil) 
 														  style:UIBarButtonItemStyleBordered 
 														 target:self 
 														 action:@selector(showMasterPopover:)];
