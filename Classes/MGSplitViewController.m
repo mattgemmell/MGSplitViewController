@@ -713,7 +713,7 @@
 		}
 		
 		// Show popover.
-		[_hiddenPopoverController presentPopoverFromBarButtonItem:_barButtonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		[_hiddenPopoverController presentPopoverFromBarButtonItem:(sender ? sender : _barButtonItem) permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 	}
 }
 
