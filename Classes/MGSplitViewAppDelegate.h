@@ -19,10 +19,10 @@
     DetailViewController *detailViewController;
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, strong) IBOutlet UIWindow *window;
 
-@property (nonatomic, retain) IBOutlet MGSplitViewController *splitViewController;
-@property (nonatomic, retain) IBOutlet RootViewController *rootViewController;
-@property (nonatomic, retain) IBOutlet DetailViewController *detailViewController;
+@property (nonatomic, strong) IBOutlet MGSplitViewController *splitViewController;
+@property (nonatomic, strong) IBOutlet RootViewController *rootViewController;
+@property (nonatomic, strong) IBOutlet DetailViewController *detailViewController;
 
 @end
