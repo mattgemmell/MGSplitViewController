@@ -43,17 +43,10 @@
 #pragma mark Geometry helpers
 
 
-double deg2Rad(double degrees)
+static double deg2Rad(double degrees)
 {
-	// Converts degrees to radians.
-	return degrees * (M_PI / 180.0);
-}
-
-
-double rad2Deg(double radians)
-{
-	// Converts radians to degrees.
-	return radians * (180 / M_PI);
+    // Converts degrees to radians.
+    return degrees * (M_PI / 180.0);
 }
 
 
