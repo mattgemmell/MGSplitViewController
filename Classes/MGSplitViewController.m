@@ -961,6 +961,10 @@
 		if ([_viewControllers objectAtIndex:0] == newMaster) {
 			changed = NO;
 		} else {
+			// remove old master's view from the view hierarchy 
+			// otherwise new master's view will be added in next layout without removing old view
+			// leaving the view while deallocating the vc will lead to crashes if the view uses the vc as datasource or delegate
+			[[[self masterViewController] view] removeFromSuperview];
 			[_viewControllers replaceObjectAtIndex:0 withObject:newMaster];
 		}
 		
@@ -992,13 +996,17 @@
 	if (!_viewControllers) {
 		_viewControllers = [[NSMutableArray alloc] initWithCapacity:2];
 		[_viewControllers addObject:[NSNull null]];
-	}
+	} 
 	
 	BOOL changed = YES;
 	if ([_viewControllers count] > 1) {
 		if ([_viewControllers objectAtIndex:1] == detail) {
 			changed = NO;
 		} else {
+			// remove old detail's view from the view hierarchy 
+			// otherwise new detail's view will be added in next layout without removing old view
+			// leaving the view while deallocating the vc will lead to crashes if the view uses the vc as datasource or delegate
+			[[[self detailViewController] view] removeFromSuperview];
 			[_viewControllers replaceObjectAtIndex:1 withObject:detail];
 		}
 		
