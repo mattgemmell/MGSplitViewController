@@ -243,7 +243,9 @@
 	
 	// Account for status bar, which always subtracts from the height (since it's always at the top of the screen).
 	height -= statusBarHeight;
-	
+	if (self.tabBarController) {
+		height -= 49.0f;
+	}
 	return CGSizeMake(width, height);
 }
 
