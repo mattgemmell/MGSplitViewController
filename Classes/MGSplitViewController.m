@@ -320,6 +320,14 @@
 					[self.view addSubview:theView];
 					[controller viewDidAppear:NO];
 				}
+				if (!shouldShowMaster) {
+					self.masterViewController.view.hidden = YES;
+					NSLog(@"No need to display Should show master view...");
+				}else
+				{
+					self.masterViewController.view.hidden = NO;
+					NSLog(@"Should show master view...");
+				}
 			}
 		}
 		
@@ -711,6 +719,11 @@
             // Hide popover.
             [_hiddenPopoverController dismissPopoverAnimated:YES];
         } else {
+			
+			if(self.masterViewController.view.hidden) {
+				self.masterViewController.view.hidden = NO;	
+			}
+			
             // Inform delegate.
             if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
                 [(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
