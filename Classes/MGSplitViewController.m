@@ -9,6 +9,7 @@
 #import "MGSplitViewController.h"
 #import "MGSplitDividerView.h"
 #import "MGSplitCornersView.h"
+#import "CommentsViewController.h"
 
 #define MG_DEFAULT_SPLIT_POSITION		320.0	// default width of master view in UISplitViewController.
 #define MG_DEFAULT_SPLIT_WIDTH			1.0		// default width of split-gutter in UISplitViewController.
@@ -320,13 +321,6 @@
 					[self.view addSubview:theView];
 					[controller viewDidAppear:NO];
 				}
-				if (!shouldShowMaster) {
-					self.masterViewController.view.hidden = YES;
-				}else
-				{
-					self.masterViewController.view.hidden = NO;
-				}
-
 			}
 		}
 		
@@ -718,23 +712,51 @@
             // Hide popover.
             [_hiddenPopoverController dismissPopoverAnimated:YES];
         } else {
-			
-			if(self.masterViewController.view.hidden) {
-				self.masterViewController.view.hidden = NO;	
-			}
             // Inform delegate.
+			if (_delegate) {
+				NSLog(@"delegate");
+			}
             if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
                 [(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
                                                                          popoverController:_hiddenPopoverController
-                                                                 willPresentViewController:self.masterViewController];
-            }
+                                                                 willPresentViewController:self.masterViewController]; // commentVC];
+            }	
 
+			_hiddenPopoverController.contentViewController = self.masterViewController;
             // Show popover.
-            [_hiddenPopoverController presentPopoverFromBarButtonItem:_barButtonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+            [_hiddenPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         }
 	}
 }
 
+
+
+
+- (void)showPopover:(id)sender forCommentVC:(CommentsViewController*)commentVC
+{
+	if (_hiddenPopoverController) {
+        if (_hiddenPopoverController.popoverVisible) {
+            // Hide popover.
+            [_hiddenPopoverController dismissPopoverAnimated:YES];
+        } else {
+            // Inform delegate.
+			if (_delegate) {
+				NSLog(@"delegate");
+			}
+            if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
+                [(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
+                                                                         popoverController:_hiddenPopoverController
+                                                                 willPresentViewController:commentVC];
+            }
+			
+			_hiddenPopoverController.contentViewController = commentVC;				
+			
+			
+            // Show popover.
+            [_hiddenPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        }
+	}
+}
 
 #pragma mark -
 #pragma mark Accessors and properties

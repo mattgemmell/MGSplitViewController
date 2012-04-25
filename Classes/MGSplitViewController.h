@@ -15,6 +15,7 @@ typedef enum _MGSplitViewDividerStyle {
 } MGSplitViewDividerStyle;
 
 @class MGSplitDividerView;
+@class CommentsViewController;
 @protocol MGSplitViewControllerDelegate;
 @interface MGSplitViewController : UIViewController <UIPopoverControllerDelegate> {
 	BOOL _showsMasterInPortrait;
@@ -55,6 +56,12 @@ typedef enum _MGSplitViewDividerStyle {
 - (IBAction)toggleMasterBeforeDetail:(id)sender; // toggles position of master view relative to detail view.
 - (IBAction)toggleMasterView:(id)sender; // toggles display of the master view in the current orientation.
 - (IBAction)showMasterPopover:(id)sender; // shows the master view in a popover spawned from the provided barButtonItem, if it's currently hidden.
+
+/*
+ This method will show the popover for the comments view controller
+ */
+- (void)showPopover:(id)sender forCommentVC:(CommentsViewController*)commentVC; 
+
 - (void)notePopoverDismissed; // should rarely be needed, because you should not change the popover's delegate. If you must, then call this when it's dismissed.
 
 // Conveniences for you, because I care.
