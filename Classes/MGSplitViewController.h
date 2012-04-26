@@ -60,7 +60,9 @@ typedef enum _MGSplitViewDividerStyle {
 /*
  This method will show the popover for the comments view controller
  */
-- (void)showPopover:(id)sender forCommentVC:(CommentsViewController*)commentVC; 
+- (void)showPopover:(id)sender forCommentVC:(CommentsViewController*)commentVC;
+
+- (void)hidePopover;
 
 - (void)notePopoverDismissed; // should rarely be needed, because you should not change the popover's delegate. If you must, then call this when it's dismissed.
 

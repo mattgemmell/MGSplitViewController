@@ -713,9 +713,6 @@
             [_hiddenPopoverController dismissPopoverAnimated:YES];
         } else {
             // Inform delegate.
-			if (_delegate) {
-				NSLog(@"delegate");
-			}
             if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
                 [(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
                                                                          popoverController:_hiddenPopoverController
@@ -732,6 +729,18 @@
 
 
 
+- (void)hidePopover
+{
+	if (_hiddenPopoverController) {
+        if (_hiddenPopoverController.popoverVisible) {
+            // Hide popover.
+            [_hiddenPopoverController dismissPopoverAnimated:YES];
+        }
+	}
+}
+
+
+
 - (void)showPopover:(id)sender forCommentVC:(CommentsViewController*)commentVC
 {
 	if (_hiddenPopoverController) {
@@ -740,9 +749,6 @@
             [_hiddenPopoverController dismissPopoverAnimated:YES];
         } else {
             // Inform delegate.
-			if (_delegate) {
-				NSLog(@"delegate");
-			}
             if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
                 [(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
                                                                          popoverController:_hiddenPopoverController
