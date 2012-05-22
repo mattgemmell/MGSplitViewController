@@ -12,7 +12,7 @@
 #import "CommentsViewController.h"
 
 #define MG_DEFAULT_SPLIT_POSITION		320.0	// default width of master view in UISplitViewController.
-#define MG_DEFAULT_SPLIT_WIDTH			1.0		// default width of split-gutter in UISplitViewController.
+#define MG_DEFAULT_SPLIT_WIDTH			0.0		// default width of split-gutter in UISplitViewController.
 #define MG_DEFAULT_CORNER_RADIUS		5.0		// default corner-radius of overlapping split-inner corners on the master and detail views.
 #define MG_DEFAULT_CORNER_COLOR			[UIColor blackColor]	// default color of intruding inner corners (and divider background).
 
@@ -276,22 +276,19 @@
 		// Master on left, detail on right (or vice versa).
 		CGRect masterRect, dividerRect, detailRect;
 		if (masterFirst) {
-			if (!shouldShowMaster) {
-				// Move off-screen.
-				newFrame.origin.x -= (_splitPosition + _splitWidth);
-			}
 			
-			newFrame.size.width = _splitPosition;
-			masterRect = newFrame;
-			
-			newFrame.origin.x += newFrame.size.width;
-			newFrame.size.width = _splitWidth;
-			dividerRect = newFrame;
-			
-			newFrame.origin.x += newFrame.size.width;
-			newFrame.size.width = width - newFrame.origin.x;
+			masterRect = CGRectMake(0, 0, MG_DEFAULT_SPLIT_POSITION, newFrame.size.height);
 			detailRect = newFrame;
-			
+			//dividerRect = _dividerView.frame;
+			//dividerRect.origin.x = _splitPosition;
+			if (shouldShowMaster) {
+				// Move off-screen.
+				//dividerRect.size.width = _splitWidth;
+				detailRect.origin.x = _splitPosition;// + _splitWidth;
+			}else {
+				//dividerRect.size.width = 0.0f;
+				detailRect.origin.x = _splitPosition;
+			}
 		} else {
 			if (!shouldShowMaster) {
 				// Move off-screen.
@@ -321,11 +318,13 @@
 					[self.view addSubview:theView];
 					[controller viewDidAppear:NO];
 				}
+				/*
 				if (!shouldShowMaster) {
 					self.masterViewController.view.hidden = YES;
 				} else {
 					self.masterViewController.view.hidden = NO;
 				}
+				*/
 			}
 		}
 		
@@ -423,6 +422,7 @@
 			}
 		}
 	}
+	/* No need of corner view --- 
 	
 	// Create corner views if necessary.
 	MGSplitCornersView *leadingCorners; // top/left of screen in vertical/horizontal split.
@@ -483,6 +483,7 @@
 		[self.view bringSubviewToFront:leadingCorners];
 		[self.view bringSubviewToFront:trailingCorners];
 	}
+	*/
 }
 
 
@@ -934,6 +935,7 @@
 	if (shouldAnimate) {
 		[UIView beginAnimations:@"SplitPosition" context:nil];
 	}
+	[UIView setAnimationDuration:0.3];
 	[self setSplitPosition:posn];
 	if (shouldAnimate) {
 		[UIView commitAnimations];
