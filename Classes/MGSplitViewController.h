@@ -32,6 +32,7 @@ typedef enum _MGSplitViewDividerStyle {
 	float _splitPosition;
 	BOOL _reconfigurePopup;
 	MGSplitViewDividerStyle _dividerStyle; // Meta-setting which configures several aspects of appearance and behaviour.
+	BOOL _supportPortait;
 }
 
 @property (nonatomic, assign) IBOutlet id <MGSplitViewControllerDelegate> delegate;
@@ -50,6 +51,8 @@ typedef enum _MGSplitViewDividerStyle {
 @property (nonatomic, assign) MGSplitViewDividerStyle dividerStyle; // style (and behaviour) of the divider between master and detail.
 
 @property (nonatomic, readonly, getter=isLandscape) BOOL landscape; // returns YES if this view controller is in either of the two Landscape orientations, else NO.
+
+@property (nonatomic, assign) BOOL supportPortrait;
 
 // Actions
 - (IBAction)toggleSplitOrientation:(id)sender; // toggles split axis between vertical (left/right; default) and horizontal (top/bottom).

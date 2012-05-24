@@ -131,6 +131,8 @@
 	_vertical = YES;
 	_masterBeforeDetail = YES;
 	_splitPosition = MG_DEFAULT_SPLIT_POSITION;
+	_supportPortait = YES;
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 	CGRect divRect = self.view.bounds;
 	if ([self isVertical]) {
 		divRect.origin.y = _splitPosition;
@@ -165,6 +167,17 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+	if UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]) {
+		return YES;
+	}
+	else if UIDeviceOrientationIsPortrait([[UIDevice currentDevice] orientation]) {
+		if (self.supportPortrait) {
+			return YES;
+		}
+		else {
+			return NO;
+		}
+	}
     return YES;
 }
 
@@ -1170,6 +1183,6 @@
 @synthesize splitWidth;
 @synthesize allowsDraggingDivider;
 @synthesize dividerStyle;
-
+@synthesize supportPortrait=_supportPortait;
 
 @end
