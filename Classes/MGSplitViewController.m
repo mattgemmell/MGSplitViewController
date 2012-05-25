@@ -9,7 +9,6 @@
 #import "MGSplitViewController.h"
 #import "MGSplitDividerView.h"
 #import "MGSplitCornersView.h"
-#import "CommentsViewController.h"
 
 #define MG_DEFAULT_SPLIT_POSITION		320.0	// default width of master view in UISplitViewController.
 #define MG_DEFAULT_SPLIT_WIDTH			12.0		// default width of split-gutter in UISplitViewController.
@@ -207,8 +206,7 @@
 	if(rect.origin.y < 0){
 		rect.origin.y = 0;
 	}
-	self.view.bounds = rect;
-	
+	self.view.bounds = rect;	
  	_reconfigurePopup = YES;
 	[self layoutSubviewsForInterfaceOrientation:toInterfaceOrientation withAnimation:YES];
 }
@@ -273,7 +271,6 @@
 	CGSize fullSize = [self splitViewSizeForOrientation:theOrientation];
 	float width = fullSize.width;
 	float height = fullSize.height;
-	
 	if (NO) { // Just for debugging.
 		NSLog(@"Target orientation is %@, dimensions will be %.0f x %.0f", 
 			  [self nameOfInterfaceOrientation:theOrientation], width, height);
@@ -504,7 +501,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	
 	if ([self isShowingMaster]) {
 		[self.masterViewController viewWillAppear:animated];
 	}
@@ -752,28 +748,6 @@
 
 
 
-- (void)showPopover:(id)sender forCommentVC:(CommentsViewController*)commentVC
-{
-	if (_hiddenPopoverController) {
-        if (_hiddenPopoverController.popoverVisible) {
-            // Hide popover.
-            [_hiddenPopoverController dismissPopoverAnimated:YES];
-        } else {
-            // Inform delegate.
-            if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
-                [(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self
-                                                                         popoverController:_hiddenPopoverController
-                                                                 willPresentViewController:commentVC];
-            }
-			
-			_hiddenPopoverController.contentViewController = commentVC;				
-			
-			
-            // Show popover.
-            [_hiddenPopoverController presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-        }
-	}
-}
 
 #pragma mark -
 #pragma mark Accessors and properties
