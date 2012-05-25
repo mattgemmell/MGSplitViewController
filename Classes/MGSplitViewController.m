@@ -73,7 +73,8 @@
 
 - (BOOL)isLandscape
 {
-	return UIInterfaceOrientationIsLandscape(self.interfaceOrientation);
+	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];    	
+	return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
 
@@ -86,7 +87,8 @@
 
 - (BOOL)shouldShowMaster
 {
-	return [self shouldShowMasterForInterfaceOrientation:self.interfaceOrientation];
+	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];    	
+	return [self shouldShowMasterForInterfaceOrientation:interfaceOrientation];
 }
 
 
@@ -167,18 +169,12 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	if UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]) {
+	if (self.supportPortrait) {
 		return YES;
+		
+	} else {
+		return  UIInterfaceOrientationIsLandscape(interfaceOrientation);
 	}
-	else if UIDeviceOrientationIsPortrait([[UIDevice currentDevice] orientation]) {
-		if (self.supportPortrait) {
-			return YES;
-		}
-		else {
-			return NO;
-		}
-	}
-    return YES;
 }
 
 
@@ -206,9 +202,14 @@
 	if (_hiddenPopoverController && _hiddenPopoverController.popoverVisible) {
 		[_hiddenPopoverController dismissPopoverAnimated:NO];
 	}
-	
 	// Re-tile views.
-	_reconfigurePopup = YES;
+	CGRect rect = self.view.bounds;
+	if(rect.origin.y < 0){
+		rect.origin.y = 0;
+	}
+	self.view.bounds = rect;
+	
+ 	_reconfigurePopup = YES;
 	[self layoutSubviewsForInterfaceOrientation:toInterfaceOrientation withAnimation:YES];
 }
 
@@ -488,13 +489,15 @@
 
 - (void)layoutSubviewsWithAnimation:(BOOL)animate
 {
-	[self layoutSubviewsForInterfaceOrientation:self.interfaceOrientation withAnimation:animate];
+	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];    
+	[self layoutSubviewsForInterfaceOrientation:interfaceOrientation withAnimation:animate];
 }
 
 
 - (void)layoutSubviews
 {
-	[self layoutSubviewsForInterfaceOrientation:self.interfaceOrientation withAnimation:YES];
+	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];    	
+	[self layoutSubviewsForInterfaceOrientation:interfaceOrientation withAnimation:YES];
 }
 
 
@@ -897,7 +900,8 @@
 	// Check to see if delegate wishes to constrain the position.
 	float newPosn = posn;
 	BOOL constrained = NO;
-	CGSize fullSize = [self splitViewSizeForOrientation:self.interfaceOrientation];
+	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];    
+	CGSize fullSize = [self splitViewSizeForOrientation:interfaceOrientation];
 	if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:constrainSplitPosition:splitViewSize:)]) {
 		newPosn = [_delegate splitViewController:self constrainSplitPosition:newPosn splitViewSize:fullSize];
 		constrained = YES; // implicitly trust delegate's response.
