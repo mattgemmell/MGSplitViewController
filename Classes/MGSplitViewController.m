@@ -168,6 +168,8 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+	return YES;
+	
 	if (self.supportPortrait) {
 		return YES;
 		
