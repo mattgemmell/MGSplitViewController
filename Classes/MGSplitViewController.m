@@ -170,12 +170,13 @@
 {
 	return YES;
 	
-	if (self.supportPortrait) {
+/*	if (self.supportPortrait) {
 		return YES;
 		
 	} else {
 		return  UIInterfaceOrientationIsLandscape(interfaceOrientation);
 	}
+ */
 }
 
 
