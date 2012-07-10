@@ -60,22 +60,22 @@
 #pragma mark Split view support
 
 
-- (void)splitViewController:(MGSplitViewController*)svc 
-	 willHideViewController:(UIViewController *)aViewController 
-		  withBarButtonItem:(UIBarButtonItem*)barButtonItem 
-	   forPopoverController: (UIPopoverController*)pc
-{
-	//NSLog(@"%@", NSStringFromSelector(_cmd));
-	
-	if (barButtonItem) {
-		barButtonItem.title = @"Popover";
-		NSMutableArray *items = [[toolbar items] mutableCopy];
-		[items insertObject:barButtonItem atIndex:0];
-		[toolbar setItems:items animated:YES];
-		[items release];
-	}
-    self.popoverController = pc;
-}
+//- (void)splitViewController:(MGSplitViewController*)svc 
+//	 willHideViewController:(UIViewController *)aViewController 
+//		  withBarButtonItem:(UIBarButtonItem*)barButtonItem 
+//	   forPopoverController: (UIPopoverController*)pc
+//{
+//	//NSLog(@"%@", NSStringFromSelector(_cmd));
+//	
+//	if (barButtonItem) {
+//		barButtonItem.title = @"Popover";
+//		NSMutableArray *items = [[toolbar items] mutableCopy];
+//		[items insertObject:barButtonItem atIndex:0];
+//		[toolbar setItems:items animated:YES];
+//		[items release];
+//	}
+//    self.popoverController = pc;
+//}
 
 
 // Called when the view is shown again in the split view, invalidating the button and popover controller.

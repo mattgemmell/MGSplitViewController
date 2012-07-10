@@ -17,7 +17,7 @@ typedef enum _MGSplitViewDividerStyle {
 @class MGSplitDividerView;
 @class CommentsViewController;
 @protocol MGSplitViewControllerDelegate;
-@interface MGSplitViewController : UIViewController <UIPopoverControllerDelegate> {
+@interface MGSplitViewController : UIViewController  {
 	BOOL _showsMasterInPortrait;
 	BOOL _showsMasterInLandscape;
 	float _splitWidth;
@@ -26,11 +26,9 @@ typedef enum _MGSplitViewDividerStyle {
 	BOOL _masterBeforeDetail;
 	NSMutableArray *_viewControllers;
 	UIBarButtonItem *_barButtonItem; // To be compliant with wacky UISplitViewController behaviour.
-    UIPopoverController *_hiddenPopoverController; // Popover used to hold the master view if it's not always visible.
 	MGSplitDividerView *_dividerView; // View that draws the divider between the master and detail views.
 	NSArray *_cornerViews; // Views to draw the inner rounded corners between master and detail views.
 	float _splitPosition;
-	BOOL _reconfigurePopup;
 	MGSplitViewDividerStyle _dividerStyle; // Meta-setting which configures several aspects of appearance and behaviour.
 	BOOL _supportPortait;
 }
@@ -58,11 +56,6 @@ typedef enum _MGSplitViewDividerStyle {
 - (IBAction)toggleSplitOrientation:(id)sender; // toggles split axis between vertical (left/right; default) and horizontal (top/bottom).
 - (IBAction)toggleMasterBeforeDetail:(id)sender; // toggles position of master view relative to detail view.
 - (IBAction)toggleMasterView:(id)sender; // toggles display of the master view in the current orientation.
-- (IBAction)showMasterPopover:(id)sender; // shows the master view in a popover spawned from the provided barButtonItem, if it's currently hidden.
-
-- (void)hidePopover;
-
-- (void)notePopoverDismissed; // should rarely be needed, because you should not change the popover's delegate. If you must, then call this when it's dismissed.
 
 // Conveniences for you, because I care.
 - (BOOL)isShowingMaster;
@@ -95,10 +88,10 @@ typedef enum _MGSplitViewDividerStyle {
 @optional
 
 // Called when a button should be added to a toolbar for a hidden view controller.
-- (void)splitViewController:(MGSplitViewController*)svc 
-	 willHideViewController:(UIViewController *)aViewController 
-		  withBarButtonItem:(UIBarButtonItem*)barButtonItem 
-	   forPopoverController: (UIPopoverController*)pc;
+//- (void)splitViewController:(MGSplitViewController*)svc 
+//	 willHideViewController:(UIViewController *)aViewController 
+//		  withBarButtonItem:(UIBarButtonItem*)barButtonItem 
+//	   forPopoverController: (UIPopoverController*)pc;
 
 // Called when the master view is shown again in the split view, invalidating the button and popover controller.
 - (void)splitViewController:(MGSplitViewController*)svc 
