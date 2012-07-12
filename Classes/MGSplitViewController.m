@@ -9,6 +9,7 @@
 #import "MGSplitViewController.h"
 #import "MGSplitDividerView.h"
 #import "MGSplitCornersView.h"
+#import "Common.h"
 
 #define MG_MASTER_WIDTH                 320.0	// default width of master view in UISplitViewController.
 #define MG_DEFAULT_SPLIT_POSITION		0.0	    // start closed.
@@ -166,66 +167,70 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	return YES;
-	
-/*	if (self.supportPortrait) {
-		return YES;
-		
-	} else {
-		return  UIInterfaceOrientationIsLandscape(interfaceOrientation);
-	}
- */
+	return (IS_IPAD() || interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	[self.masterViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	if (IS_IPAD() || toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		[self.masterViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+		[self.detailViewController willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	}
 }
 
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-	[self.masterViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-	[self.detailViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+	if (IS_IPAD() || fromInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		[self.masterViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+		[self.detailViewController didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+	}
 }
 
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation 
 										 duration:(NSTimeInterval)duration
 {
-	[self.masterViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	
-	// Re-tile views.
-	CGRect rect = self.view.bounds;
-	if(rect.origin.y < 0){
-		rect.origin.y = 0;
+	if (IS_IPAD() || toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		[self.masterViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+		[self.detailViewController willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+		
+		// Re-tile views.
+		CGRect rect = self.view.bounds;
+		if(rect.origin.y < 0){
+			rect.origin.y = 0;
+		}
+		self.view.bounds = rect;	
+		[self layoutSubviewsForInterfaceOrientation:toInterfaceOrientation withAnimation:YES];
 	}
-	self.view.bounds = rect;	
-	[self layoutSubviewsForInterfaceOrientation:toInterfaceOrientation withAnimation:YES];
 }
 
 
 - (void)willAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	[self.masterViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	if (IS_IPAD() || toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		[self.masterViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+		[self.detailViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	}
 }
 
 
 - (void)didAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
-	[self.masterViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
-	[self.detailViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
+	if (IS_IPAD() || toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		[self.masterViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
+		[self.detailViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
+	}
 }
 
 
 - (void)willAnimateSecondHalfOfRotationFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	[self.masterViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
+	if (IS_IPAD() || fromInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		[self.masterViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
+		[self.detailViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
+	}
 }
 
 
@@ -258,222 +263,223 @@
 
 - (void)layoutSubviewsForInterfaceOrientation:(UIInterfaceOrientation)theOrientation withAnimation:(BOOL)animate
 {
-	
-	// Layout the master, detail and divider views appropriately, adding/removing subviews as needed.
-	// First obtain relevant geometry.
-	CGSize fullSize = [self splitViewSizeForOrientation:theOrientation];
-	float width = fullSize.width;
-	float height = fullSize.height;
-	if (NO) { // Just for debugging.
-		NSLog(@"Target orientation is %@, dimensions will be %.0f x %.0f", 
-			  [self nameOfInterfaceOrientation:theOrientation], width, height);
-	}
-	
-	// Layout the master, divider and detail views.
-	CGRect newFrame = CGRectMake(0, 0, width, height);
-	UIViewController *controller;
-	UIView *theView;
-	BOOL shouldShowMaster = [self shouldShowMasterForInterfaceOrientation:theOrientation];
-	BOOL masterFirst = [self isMasterBeforeDetail];
-	if ([self isVertical]) {
-		// Master on left, detail on right (or vice versa).
-		CGRect masterRect, dividerRect, detailRect;
-		if (masterFirst) {
-			
-			masterRect = CGRectMake(0, 0, MG_MASTER_WIDTH - _splitWidth, newFrame.size.height);
-			dividerRect = CGRectMake(_splitPosition - _splitWidth, 0, MG_DEFAULT_SPLIT_WIDTH, newFrame.size.height);
-			detailRect = newFrame;
-			detailRect.origin.x = _splitPosition;
-		} else {
-			if (!shouldShowMaster) {
-				// Move off-screen.
-				newFrame.size.width += (_splitPosition + _splitWidth);
-			}
-			
-			newFrame.size.width -= (_splitPosition + _splitWidth);
-			detailRect = newFrame;
-			
-			newFrame.origin.x += newFrame.size.width;
-			newFrame.size.width = _splitWidth;
-			dividerRect = newFrame;
-			
-			newFrame.origin.x += newFrame.size.width;
-			newFrame.size.width = _splitPosition;
-			masterRect = newFrame;
+	if (IS_IPAD() || theOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		// Layout the master, detail and divider views appropriately, adding/removing subviews as needed.
+		// First obtain relevant geometry.
+		CGSize fullSize = [self splitViewSizeForOrientation:theOrientation];
+		float width = fullSize.width;
+		float height = fullSize.height;
+		if (NO) { // Just for debugging.
+			NSLog(@"Target orientation is %@, dimensions will be %.0f x %.0f", 
+				  [self nameOfInterfaceOrientation:theOrientation], width, height);
 		}
 		
-		// Position master.
-		controller = self.masterViewController;
-		if (controller && [controller isKindOfClass:[UIViewController class]])  {
-			theView = controller.view;
-			if (theView) {
-				theView.frame = masterRect;
-				if (!theView.superview) {
-					[controller viewWillAppear:NO];
-					[self.view addSubview:theView];
-					[controller viewDidAppear:NO];
+		// Layout the master, divider and detail views.
+		CGRect newFrame = CGRectMake(0, 0, width, height);
+		UIViewController *controller;
+		UIView *theView;
+		BOOL shouldShowMaster = [self shouldShowMasterForInterfaceOrientation:theOrientation];
+		BOOL masterFirst = [self isMasterBeforeDetail];
+		if ([self isVertical]) {
+			// Master on left, detail on right (or vice versa).
+			CGRect masterRect, dividerRect, detailRect;
+			if (masterFirst) {
+				
+				masterRect = CGRectMake(0, 0, MG_MASTER_WIDTH - _splitWidth, newFrame.size.height);
+				dividerRect = CGRectMake(_splitPosition - _splitWidth, 0, MG_DEFAULT_SPLIT_WIDTH, newFrame.size.height);
+				detailRect = newFrame;
+				detailRect.origin.x = _splitPosition;
+			} else {
+				if (!shouldShowMaster) {
+					// Move off-screen.
+					newFrame.size.width += (_splitPosition + _splitWidth);
+				}
+				
+				newFrame.size.width -= (_splitPosition + _splitWidth);
+				detailRect = newFrame;
+				
+				newFrame.origin.x += newFrame.size.width;
+				newFrame.size.width = _splitWidth;
+				dividerRect = newFrame;
+				
+				newFrame.origin.x += newFrame.size.width;
+				newFrame.size.width = _splitPosition;
+				masterRect = newFrame;
+			}
+			
+			// Position master.
+			controller = self.masterViewController;
+			if (controller && [controller isKindOfClass:[UIViewController class]])  {
+				theView = controller.view;
+				if (theView) {
+					theView.frame = masterRect;
+					if (!theView.superview) {
+						[controller viewWillAppear:NO];
+						[self.view addSubview:theView];
+						[controller viewDidAppear:NO];
+					}
 				}
 			}
-		}
-		
-		// Position divider.
-		theView = _dividerView;
-		theView.frame = dividerRect;
-		if (!theView.superview) {
-			[self.view addSubview:theView];
-		}else {
-			[self.view bringSubviewToFront:theView];
-		}
-		
-		// Position detail.
-		controller = self.detailViewController;
-		if (controller && [controller isKindOfClass:[UIViewController class]])  {
-			theView = controller.view;
-			if (theView) {
-				theView.frame = detailRect;
-				if (!theView.superview) {
-					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
-				} else {
-					[self.view bringSubviewToFront:theView];
+			
+			// Position divider.
+			theView = _dividerView;
+			theView.frame = dividerRect;
+			if (!theView.superview) {
+				[self.view addSubview:theView];
+			}else {
+				[self.view bringSubviewToFront:theView];
+			}
+			
+			// Position detail.
+			controller = self.detailViewController;
+			if (controller && [controller isKindOfClass:[UIViewController class]])  {
+				theView = controller.view;
+				if (theView) {
+					theView.frame = detailRect;
+					if (!theView.superview) {
+						[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
+					} else {
+						[self.view bringSubviewToFront:theView];
+					}
 				}
 			}
-		}
-		
-	} else {
-		// Master above, detail below (or vice versa).
-		CGRect masterRect, dividerRect, detailRect;
-		if (masterFirst) {
-			if (!shouldShowMaster) {
-				// Move off-screen.
-				newFrame.origin.y -= (_splitPosition + _splitWidth);
-			}
-			
-			newFrame.size.height = _splitPosition;
-			masterRect = newFrame;
-			
-			newFrame.origin.y += newFrame.size.height;
-			newFrame.size.height = _splitWidth;
-			dividerRect = newFrame;
-			
-			newFrame.origin.y += newFrame.size.height;
-			newFrame.size.height = height - newFrame.origin.y;
-			detailRect = newFrame;
 			
 		} else {
-			if (!shouldShowMaster) {
-				// Move off-screen.
-				newFrame.size.height += (_splitPosition + _splitWidth);
+			// Master above, detail below (or vice versa).
+			CGRect masterRect, dividerRect, detailRect;
+			if (masterFirst) {
+				if (!shouldShowMaster) {
+					// Move off-screen.
+					newFrame.origin.y -= (_splitPosition + _splitWidth);
+				}
+				
+				newFrame.size.height = _splitPosition;
+				masterRect = newFrame;
+				
+				newFrame.origin.y += newFrame.size.height;
+				newFrame.size.height = _splitWidth;
+				dividerRect = newFrame;
+				
+				newFrame.origin.y += newFrame.size.height;
+				newFrame.size.height = height - newFrame.origin.y;
+				detailRect = newFrame;
+				
+			} else {
+				if (!shouldShowMaster) {
+					// Move off-screen.
+					newFrame.size.height += (_splitPosition + _splitWidth);
+				}
+				
+				newFrame.size.height -= (_splitPosition + _splitWidth);
+				detailRect = newFrame;
+				
+				newFrame.origin.y += newFrame.size.height;
+				newFrame.size.height = _splitWidth;
+				dividerRect = newFrame;
+				
+				newFrame.origin.y += newFrame.size.height;
+				newFrame.size.height = _splitPosition;
+				masterRect = newFrame;
 			}
 			
-			newFrame.size.height -= (_splitPosition + _splitWidth);
-			detailRect = newFrame;
+			// Position master.
+			controller = self.masterViewController;
+			if (controller && [controller isKindOfClass:[UIViewController class]])  {
+				theView = controller.view;
+				if (theView) {
+					theView.frame = masterRect;
+					if (!theView.superview) {
+						[controller viewWillAppear:NO];
+						[self.view addSubview:theView];
+						[controller viewDidAppear:NO];
+					}
+				}
+			}
 			
-			newFrame.origin.y += newFrame.size.height;
-			newFrame.size.height = _splitWidth;
-			dividerRect = newFrame;
+			// Position divider.
+			theView = _dividerView;
+			theView.frame = dividerRect;
+			if (!theView.superview) {
+				[self.view addSubview:theView];
+			}
 			
-			newFrame.origin.y += newFrame.size.height;
-			newFrame.size.height = _splitPosition;
-			masterRect = newFrame;
-		}
-		
-		// Position master.
-		controller = self.masterViewController;
-		if (controller && [controller isKindOfClass:[UIViewController class]])  {
-			theView = controller.view;
-			if (theView) {
-				theView.frame = masterRect;
-				if (!theView.superview) {
-					[controller viewWillAppear:NO];
-					[self.view addSubview:theView];
-					[controller viewDidAppear:NO];
+			// Position detail.
+			controller = self.detailViewController;
+			if (controller && [controller isKindOfClass:[UIViewController class]])  {
+				theView = controller.view;
+				if (theView) {
+					theView.frame = detailRect;
+					if (!theView.superview) {
+						[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
+					} else {
+						[self.view bringSubviewToFront:theView];
+					}
 				}
 			}
 		}
+		/* No need of corner view --- 
 		
-		// Position divider.
-		theView = _dividerView;
-		theView.frame = dividerRect;
-		if (!theView.superview) {
-			[self.view addSubview:theView];
+		// Create corner views if necessary.
+		MGSplitCornersView *leadingCorners; // top/left of screen in vertical/horizontal split.
+		MGSplitCornersView *trailingCorners; // bottom/right of screen in vertical/horizontal split.
+		if (!_cornerViews) {
+			CGRect cornerRect = CGRectMake(0, 0, 10, 10); // arbitrary, will be resized below.
+			leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
+			leadingCorners.splitViewController = self;
+			leadingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
+			leadingCorners.cornerRadius = MG_DEFAULT_CORNER_RADIUS;
+			trailingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
+			trailingCorners.splitViewController = self;
+			trailingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
+			trailingCorners.cornerRadius = MG_DEFAULT_CORNER_RADIUS;
+			_cornerViews = [[NSArray alloc] initWithObjects:leadingCorners, trailingCorners, nil];
+			[leadingCorners release];
+			[trailingCorners release];
+			
+		} else if ([_cornerViews count] == 2) {
+			leadingCorners = [_cornerViews objectAtIndex:0];
+			trailingCorners = [_cornerViews objectAtIndex:1];
 		}
 		
-		// Position detail.
-		controller = self.detailViewController;
-		if (controller && [controller isKindOfClass:[UIViewController class]])  {
-			theView = controller.view;
-			if (theView) {
-				theView.frame = detailRect;
-				if (!theView.superview) {
-					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
-				} else {
-					[self.view bringSubviewToFront:theView];
-				}
-			}
+		// Configure and layout the corner-views.
+		leadingCorners.cornersPosition = (_vertical) ? MGCornersPositionLeadingVertical : MGCornersPositionLeadingHorizontal;
+		trailingCorners.cornersPosition = (_vertical) ? MGCornersPositionTrailingVertical : MGCornersPositionTrailingHorizontal;
+		leadingCorners.autoresizingMask = (_vertical) ? UIViewAutoresizingFlexibleBottomMargin : UIViewAutoresizingFlexibleRightMargin;
+		trailingCorners.autoresizingMask = (_vertical) ? UIViewAutoresizingFlexibleTopMargin : UIViewAutoresizingFlexibleLeftMargin;
+		
+		float x, y, cornersWidth, cornersHeight;
+		CGRect leadingRect, trailingRect;
+		float radius = leadingCorners.cornerRadius;
+		if (_vertical) { // left/right split
+			cornersWidth = (radius * 2.0) + _splitWidth;
+			cornersHeight = radius;
+			x = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : width - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
+			y = 0;
+			leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // top corners
+			trailingRect = CGRectMake(x, (height - cornersHeight), cornersWidth, cornersHeight); // bottom corners
+			
+		} else { // top/bottom split
+			x = 0;
+			y = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : height - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
+			cornersWidth = radius;
+			cornersHeight = (radius * 2.0) + _splitWidth;
+			leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // left corners
+			trailingRect = CGRectMake((width - cornersWidth), y, cornersWidth, cornersHeight); // right corners
 		}
-	}
-	/* No need of corner view --- 
-	
-	// Create corner views if necessary.
-	MGSplitCornersView *leadingCorners; // top/left of screen in vertical/horizontal split.
-	MGSplitCornersView *trailingCorners; // bottom/right of screen in vertical/horizontal split.
-	if (!_cornerViews) {
-		CGRect cornerRect = CGRectMake(0, 0, 10, 10); // arbitrary, will be resized below.
-		leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
-		leadingCorners.splitViewController = self;
-		leadingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
-		leadingCorners.cornerRadius = MG_DEFAULT_CORNER_RADIUS;
-		trailingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
-		trailingCorners.splitViewController = self;
-		trailingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
-		trailingCorners.cornerRadius = MG_DEFAULT_CORNER_RADIUS;
-		_cornerViews = [[NSArray alloc] initWithObjects:leadingCorners, trailingCorners, nil];
-		[leadingCorners release];
-		[trailingCorners release];
 		
-	} else if ([_cornerViews count] == 2) {
-		leadingCorners = [_cornerViews objectAtIndex:0];
-		trailingCorners = [_cornerViews objectAtIndex:1];
-	}
-	
-	// Configure and layout the corner-views.
-	leadingCorners.cornersPosition = (_vertical) ? MGCornersPositionLeadingVertical : MGCornersPositionLeadingHorizontal;
-	trailingCorners.cornersPosition = (_vertical) ? MGCornersPositionTrailingVertical : MGCornersPositionTrailingHorizontal;
-	leadingCorners.autoresizingMask = (_vertical) ? UIViewAutoresizingFlexibleBottomMargin : UIViewAutoresizingFlexibleRightMargin;
-	trailingCorners.autoresizingMask = (_vertical) ? UIViewAutoresizingFlexibleTopMargin : UIViewAutoresizingFlexibleLeftMargin;
-	
-	float x, y, cornersWidth, cornersHeight;
-	CGRect leadingRect, trailingRect;
-	float radius = leadingCorners.cornerRadius;
-	if (_vertical) { // left/right split
-		cornersWidth = (radius * 2.0) + _splitWidth;
-		cornersHeight = radius;
-		x = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : width - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
-		y = 0;
-		leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // top corners
-		trailingRect = CGRectMake(x, (height - cornersHeight), cornersWidth, cornersHeight); // bottom corners
+		leadingCorners.frame = leadingRect;
+		trailingCorners.frame = trailingRect;
 		
-	} else { // top/bottom split
-		x = 0;
-		y = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : height - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
-		cornersWidth = radius;
-		cornersHeight = (radius * 2.0) + _splitWidth;
-		leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // left corners
-		trailingRect = CGRectMake((width - cornersWidth), y, cornersWidth, cornersHeight); // right corners
+		// Ensure corners are visible and frontmost.
+		if (!leadingCorners.superview) {
+			[self.view insertSubview:leadingCorners aboveSubview:self.detailViewController.view];
+			[self.view insertSubview:trailingCorners aboveSubview:self.detailViewController.view];
+		} else {
+			[self.view bringSubviewToFront:leadingCorners];
+			[self.view bringSubviewToFront:trailingCorners];
+		}
+		*/
 	}
-	
-	leadingCorners.frame = leadingRect;
-	trailingCorners.frame = trailingRect;
-	
-	// Ensure corners are visible and frontmost.
-	if (!leadingCorners.superview) {
-		[self.view insertSubview:leadingCorners aboveSubview:self.detailViewController.view];
-		[self.view insertSubview:trailingCorners aboveSubview:self.detailViewController.view];
-	} else {
-		[self.view bringSubviewToFront:leadingCorners];
-		[self.view bringSubviewToFront:trailingCorners];
-	}
-	*/
 }
 
 
@@ -728,30 +734,32 @@
 	// Check to see if delegate wishes to constrain the position.
 	float newPosn = posn;
 	BOOL constrained = NO;
-	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];    
-	CGSize fullSize = [self splitViewSizeForOrientation:interfaceOrientation];
-	if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:constrainSplitPosition:splitViewSize:)]) {
-		newPosn = [_delegate splitViewController:self constrainSplitPosition:newPosn splitViewSize:fullSize];
-		constrained = YES; // implicitly trust delegate's response.
-		
-	} else {
-		// Apply default constraints if delegate doesn't wish to participate.
-		float minPos = MG_MIN_VIEW_WIDTH;
-		float maxPos = ((_vertical) ? fullSize.width : fullSize.height) - (MG_MIN_VIEW_WIDTH + _splitWidth);
-		constrained = (newPosn != _splitPosition && newPosn >= minPos && newPosn <= maxPos);
-	}
-	
-	if (constrained) {
-		
-		_splitPosition = newPosn;
-		
-		// Inform delegate.
-		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willMoveSplitToPosition:)]) {
-			[_delegate splitViewController:self willMoveSplitToPosition:_splitPosition];
+	UIInterfaceOrientation interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];  
+	if (IS_IPAD() || interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
+		CGSize fullSize = [self splitViewSizeForOrientation:interfaceOrientation];
+		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:constrainSplitPosition:splitViewSize:)]) {
+			newPosn = [_delegate splitViewController:self constrainSplitPosition:newPosn splitViewSize:fullSize];
+			constrained = YES; // implicitly trust delegate's response.
+			
+		} else {
+			// Apply default constraints if delegate doesn't wish to participate.
+			float minPos = MG_MIN_VIEW_WIDTH;
+			float maxPos = ((_vertical) ? fullSize.width : fullSize.height) - (MG_MIN_VIEW_WIDTH + _splitWidth);
+			constrained = (newPosn != _splitPosition && newPosn >= minPos && newPosn <= maxPos);
 		}
 		
-		if ([self isShowingMaster]) {
-			[self layoutSubviews];
+		if (constrained) {
+			
+			_splitPosition = newPosn;
+			
+			// Inform delegate.
+			if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willMoveSplitToPosition:)]) {
+				[_delegate splitViewController:self willMoveSplitToPosition:_splitPosition];
+			}
+			
+			if ([self isShowingMaster]) {
+				[self layoutSubviews];
+			}
 		}
 	}
 }
