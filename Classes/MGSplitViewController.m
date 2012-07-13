@@ -575,8 +575,14 @@
 		}
 		
 	} else if (!inPopover && _hiddenPopoverController && _barButtonItem) {
-		// I know this looks strange, but it fixes a bizarre issue with UIPopoverController leaving masterViewController's views in disarray.
-		[_hiddenPopoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+        // on iOS 5.1, passing a CGRectZero here produces this following ominous message:
+        // -[UIPopoverController presentPopoverFromRect:inView:permittedArrowDirections:animated:]: the rect passed in to this method must have non-zero width and height. This will be an exception in a future release.
+        // this workaround was tested thusly:
+        // On iOS 4.3, CGRectZero leaves a popover afterimage before rotation, so does the code below
+        // On iOS 5.0, CGRectZero leaves a popover afterimage before rotation, the code below does not
+        // On iOS 5.1, CGRectZero leaves a popover afterimage before rotation, so does the code below
+        // Basically, this hack performs slightly better than the CGRectZero hack, and does not cause an ominous warning.
+        [_hiddenPopoverController presentPopoverFromRect:CGRectMake(-2000, -2000, 1, 1) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 		
 		// Remove master from popover and destroy popover, if it exists.
 		[_hiddenPopoverController dismissPopoverAnimated:NO];
