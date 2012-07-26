@@ -18,7 +18,9 @@
 #define MG_PANESPLITTER_CORNER_RADIUS	0.0		// corner-radius of split-inner corners for MGSplitViewDividerStylePaneSplitter style.
 #define MG_PANESPLITTER_SPLIT_WIDTH		25.0	// width of split-gutter for MGSplitViewDividerStylePaneSplitter style.
 
-#define MG_MIN_VIEW_WIDTH				200.0	// minimum width a view is allowed to become as a result of changing the splitPosition.
+#define MG_PANESPLITTER_ANIM_DURATION	0.25		// how long it take to animate changing the split position
+
+#define MG_MIN_VIEW_WIDTH				100.0	// minimum width a view is allowed to become as a result of changing the splitPosition.
 
 #define MG_ANIMATION_CHANGE_SPLIT_ORIENTATION	@"ChangeSplitOrientation"	// Animation ID for internal use.
 #define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
@@ -102,7 +104,7 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
 	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
-		[self setup];
+        // setup called in viewDidLoad, which is more Storyboard-friendly and avoid duplication
 	}
 	
 	return self;
@@ -112,12 +114,16 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
 	if ((self = [super initWithCoder:aDecoder])) {
-		[self setup];
+        // setup called in viewDidLoad
 	}
 	
 	return self;
 }
 
+-(void)viewDidLoad
+{
+    [self setup];
+}
 
 - (void)setup
 {
@@ -147,7 +153,7 @@
 
 - (void)dealloc
 {
-	_delegate = nil;
+	_splitDelegate = nil;
 	[self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 	
 }
@@ -563,8 +569,8 @@
 														 action:@selector(showMasterPopover:)];
 		
 		// Inform delegate of this state of affairs.
-		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willHideViewController:withBarButtonItem:forPopoverController:)]) {
-			[(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self 
+		if (_splitDelegate && [_splitDelegate respondsToSelector:@selector(splitViewController:willHideViewController:withBarButtonItem:forPopoverController:)]) {
+			[(NSObject <MGSplitViewControllerDelegate> *)_splitDelegate splitViewController:self 
 																willHideViewController:self.masterViewController 
 																	 withBarButtonItem:_barButtonItem 
 																  forPopoverController:_hiddenPopoverController];
@@ -579,8 +585,8 @@
 		_hiddenPopoverController = nil;
 		
 		// Inform delegate that the _barButtonItem will become invalid.
-		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willShowViewController:invalidatingBarButtonItem:)]) {
-			[(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self 
+		if (_splitDelegate && [_splitDelegate respondsToSelector:@selector(splitViewController:willShowViewController:invalidatingBarButtonItem:)]) {
+			[(NSObject <MGSplitViewControllerDelegate> *)_splitDelegate splitViewController:self 
 																willShowViewController:self.masterViewController 
 															 invalidatingBarButtonItem:_barButtonItem];
 		}
@@ -700,8 +706,8 @@
 {
 	if (_hiddenPopoverController && !(_hiddenPopoverController.popoverVisible)) {
 		// Inform delegate.
-		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
-			[(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self 
+		if (_splitDelegate && [_splitDelegate respondsToSelector:@selector(splitViewController:popoverController:willPresentViewController:)]) {
+			[(NSObject <MGSplitViewControllerDelegate> *)_splitDelegate splitViewController:self 
 																	 popoverController:_hiddenPopoverController 
 															 willPresentViewController:self.masterViewController];
 		}
@@ -716,17 +722,17 @@
 #pragma mark Accessors and properties
 
 
-- (id)delegate
+- (id<MGSplitViewControllerDelegate>)delegate
 {
-	return _delegate;
+	return _splitDelegate;
 }
 
 
-- (void)setDelegate:(id <MGSplitViewControllerDelegate>)newDelegate
+- (void)setSplitDelegate:(id <MGSplitViewControllerDelegate>)newDelegate
 {
-	if (newDelegate != _delegate && 
+	if (newDelegate != _splitDelegate && 
 		(!newDelegate || [(NSObject *)newDelegate conformsToProtocol:@protocol(MGSplitViewControllerDelegate)])) {
-		_delegate = newDelegate;
+		_splitDelegate = newDelegate;
 	}
 }
 
@@ -795,8 +801,8 @@
 		_vertical = flag;
 		
 		// Inform delegate.
-		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willChangeSplitOrientationToVertical:)]) {
-			[_delegate splitViewController:self willChangeSplitOrientationToVertical:_vertical];
+		if (_splitDelegate && [_splitDelegate respondsToSelector:@selector(splitViewController:willChangeSplitOrientationToVertical:)]) {
+			[_splitDelegate splitViewController:self willChangeSplitOrientationToVertical:_vertical];
 		}
 		
 		[self layoutSubviews];
@@ -838,8 +844,8 @@
 	float newPosn = posn;
 	BOOL constrained = NO;
 	CGSize fullSize = [self splitViewSizeForOrientation:self.interfaceOrientation];
-	if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:constrainSplitPosition:splitViewSize:)]) {
-		newPosn = [_delegate splitViewController:self constrainSplitPosition:newPosn splitViewSize:fullSize];
+	if (_splitDelegate && [_splitDelegate respondsToSelector:@selector(splitViewController:constrainSplitPosition:splitViewSize:)]) {
+		newPosn = [_splitDelegate splitViewController:self constrainSplitPosition:newPosn splitViewSize:fullSize];
 		constrained = YES; // implicitly trust delegate's response.
 		
 	} else {
@@ -857,8 +863,8 @@
 		_splitPosition = newPosn;
 		
 		// Inform delegate.
-		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willMoveSplitToPosition:)]) {
-			[_delegate splitViewController:self willMoveSplitToPosition:_splitPosition];
+		if (_splitDelegate && [_splitDelegate respondsToSelector:@selector(splitViewController:willMoveSplitToPosition:)]) {
+			[_splitDelegate splitViewController:self willMoveSplitToPosition:_splitPosition];
 		}
 		
 		if ([self isShowingMaster]) {
@@ -872,11 +878,11 @@
 {
 	BOOL shouldAnimate = (animate && [self isShowingMaster]);
 	if (shouldAnimate) {
-		[UIView beginAnimations:@"SplitPosition" context:nil];
-	}
-	[self setSplitPosition:posn];
-	if (shouldAnimate) {
-		[UIView commitAnimations];
+		[UIView animateWithDuration:MG_PANESPLITTER_ANIM_DURATION animations:^{
+			[self setSplitPosition:posn];
+		}];
+	} else {
+		[self setSplitPosition:posn];
 	}
 }
 
@@ -930,7 +936,7 @@
 	if (_viewControllers && [_viewControllers count] > 0) {
 		NSObject *controller = [_viewControllers objectAtIndex:0];
 		if ([controller isKindOfClass:[UIViewController class]]) {
-			return controller;
+			return (UIViewController *)controller;
 		}
 	}
 	
@@ -972,7 +978,7 @@
 	if (_viewControllers && [_viewControllers count] > 1) {
 		NSObject *controller = [_viewControllers objectAtIndex:1];
 		if ([controller isKindOfClass:[UIViewController class]]) {
-			return controller;
+			return (UIViewController *)controller;
 		}
 	}
 	
@@ -1060,7 +1066,7 @@
 	_dividerStyle = newStyle;
 	
 	// Reconfigure general appearance and behaviour.
-	float cornerRadius;
+	float cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
 		cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
@@ -1111,7 +1117,7 @@
 @synthesize showsMasterInPortrait;
 @synthesize showsMasterInLandscape;
 @synthesize vertical;
-@synthesize delegate;
+@synthesize splitDelegate;
 @synthesize viewControllers;
 @synthesize masterViewController;
 @synthesize detailViewController;
