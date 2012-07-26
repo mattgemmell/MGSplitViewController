@@ -80,6 +80,9 @@ typedef enum _MGSplitViewDividerStyle {
 	2. Change their .cornerRadius
  */
 
+
+- (void)callLayoutSubviewManually;
+
 @end
 
 
