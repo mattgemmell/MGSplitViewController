@@ -171,11 +171,6 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	if (IS_IPAD() || interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
-		[self layoutSubviews];
-		[self.masterViewController shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-		[self.detailViewController shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-	}
 	return (IS_IPAD() || interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
