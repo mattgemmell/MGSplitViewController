@@ -2,3 +2,7 @@
 *.perspectivev3
 build
 
+MGSplitView.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+MGSplitView.xcodeproj/project.xcworkspace/xcuserdata/pipeline.xcuserdatad/UserInterfaceState.xcuserstate
+MGSplitView.xcodeproj/xcuserdata/pipeline.xcuserdatad/xcschemes/MGSplitView.xcscheme
+MGSplitView.xcodeproj/xcuserdata/pipeline.xcuserdatad/xcschemes/xcschememanagement.plist
