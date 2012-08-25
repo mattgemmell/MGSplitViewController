@@ -14,7 +14,7 @@
 	BOOL allowsDragging;
 }
 
-@property (nonatomic, unsafe_unretained) MGSplitViewController *splitViewController; // weak ref.
+@property (nonatomic, weak) MGSplitViewController *splitViewController;
 @property (nonatomic, assign) BOOL allowsDragging;
 
 - (void)drawGripThumbInRect:(CGRect)rect;
