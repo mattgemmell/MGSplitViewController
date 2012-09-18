@@ -775,7 +775,7 @@
 	if (shouldAnimate) {
 		[UIView beginAnimations:@"SplitPosition" context:nil];
 	}
-	[UIView setAnimationDuration:0.3];
+	[UIView setAnimationDuration:0.2];
 	[self setSplitPosition:posn];
 	if (shouldAnimate) {
 		[UIView commitAnimations];
