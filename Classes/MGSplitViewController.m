@@ -142,6 +142,9 @@
 	_dividerView.splitViewController = self;
 	_dividerView.backgroundColor = MG_DEFAULT_CORNER_COLOR;
 	_dividerStyle = MGSplitViewDividerStyleThin;
+    
+    // Fix for iOS 6 layout issue
+    self.view.autoresizesSubviews = NO;
 }
 
 
