@@ -33,9 +33,7 @@
 
 - (void)dealloc
 {
-	self.cornerBackgroundColor_ = nil;
-
-	[super dealloc];
+	cornerBackgroundColor_ = nil;
 }
 
 
@@ -238,8 +236,7 @@ int floatsAreEqual(float a, float b)
 - (void)setCornerBackgroundColor:(UIColor *)color
 {
 	if (color != cornerBackgroundColor_) {
-        [cornerBackgroundColor_ release];
-		cornerBackgroundColor_ = [color retain];
+		cornerBackgroundColor_ = color;
 		[self setNeedsDisplay];
 	}
 }
