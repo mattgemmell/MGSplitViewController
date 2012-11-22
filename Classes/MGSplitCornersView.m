@@ -33,8 +33,8 @@
 
 - (void)dealloc
 {
-	self.cornerBackgroundColor = nil;
-	
+	self.cornerBackgroundColor_ = nil;
+
 	[super dealloc];
 }
 
@@ -42,7 +42,7 @@
 #pragma mark -
 #pragma mark Geometry helpers
 
-
+double deg2Rad(double degrees);
 double deg2Rad(double degrees)
 {
 	// Converts degrees to radians.
@@ -50,10 +50,22 @@ double deg2Rad(double degrees)
 }
 
 
+double rad2Deg(double radians);
 double rad2Deg(double radians)
 {
 	// Converts radians to degrees.
 	return radians * (180 / M_PI);
+}
+
+int floatsAreEqual(float a, float b)
+{
+    int r = 1;
+    if (a - b > 0
+        || a - b < 0)
+    {
+        r = 0;
+    }
+    return r;
 }
 
 
@@ -197,8 +209,9 @@ double rad2Deg(double radians)
 
 - (void)setCornerRadius:(float)newRadius
 {
-	if (newRadius != cornerRadius) {
-		cornerRadius = newRadius;
+	if (!floatsAreEqual(newRadius, cornerRadius_))
+    {
+		cornerRadius_ = newRadius;
 		[self setNeedsDisplay];
 	}
 }
@@ -224,9 +237,9 @@ double rad2Deg(double radians)
 
 - (void)setCornerBackgroundColor:(UIColor *)color
 {
-	if (color != cornerBackgroundColor) {
-		[cornerBackgroundColor release];
-		cornerBackgroundColor = [color retain];
+	if (color != cornerBackgroundColor_) {
+        [cornerBackgroundColor_ release];
+		cornerBackgroundColor_ = [color retain];
 		[self setNeedsDisplay];
 	}
 }

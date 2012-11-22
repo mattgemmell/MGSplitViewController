@@ -24,7 +24,7 @@
 #define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
 
 
-@interface MGSplitViewController (MGPrivateMethods)
+@interface MGSplitViewController ()
 
 - (void)setup;
 - (CGSize)splitViewSizeForOrientation:(UIInterfaceOrientation)theOrientation;
@@ -857,7 +857,7 @@
 		// Apply default constraints if delegate doesn't wish to participate.
 		float minPos = MG_MIN_VIEW_WIDTH;
 		float maxPos = ((_vertical) ? fullSize.width : fullSize.height) - (MG_MIN_VIEW_WIDTH + _splitWidth);
-		constrained = (newPosn != _splitPosition && newPosn >= minPos && newPosn <= maxPos);
+		constrained = (!floatsAreEqual(newPosn, _splitPosition) && newPosn >= minPos && newPosn <= maxPos);
 	}
 	
 	if (constrained) {
@@ -900,7 +900,7 @@
 
 - (void)setSplitWidth:(float)width
 {
-	if (width != _splitWidth && width >= 0) {
+	if (!floatsAreEqual(width, _splitWidth) && width >= 0) {
 		_splitWidth = width;
 		if ([self isShowingMaster]) {
 			[self layoutSubviews];
@@ -1074,9 +1074,8 @@
 	_dividerStyle = newStyle;
 	
 	// Reconfigure general appearance and behaviour.
-	float cornerRadius;
+	float cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
-		cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
 		self.allowsDraggingDivider = NO;
 		
