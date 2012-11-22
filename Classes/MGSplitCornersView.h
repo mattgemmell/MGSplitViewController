@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+int floatsAreEqual(float a, float b);
+
 typedef enum _MGCornersPosition {
 	MGCornersPositionLeadingVertical	= 0, // top of screen for a left/right split.
 	MGCornersPositionTrailingVertical	= 1, // bottom of screen for a left/right split.
@@ -17,10 +19,10 @@ typedef enum _MGCornersPosition {
 
 @class MGSplitViewController;
 @interface MGSplitCornersView : UIView {
-	float cornerRadius;
-	MGSplitViewController *splitViewController;
-	MGCornersPosition cornersPosition;
-	UIColor *cornerBackgroundColor;
+	float cornerRadius_;
+	MGSplitViewController *splitViewController_;
+	MGCornersPosition cornersPosition_;
+	UIColor *cornerBackgroundColor_;
 }
 
 @property (nonatomic, assign) float cornerRadius;
