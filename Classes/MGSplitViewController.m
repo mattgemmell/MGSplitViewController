@@ -210,7 +210,8 @@
 	}
 }
 
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)willAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	if (IS_IPAD() || toInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
@@ -218,7 +219,6 @@
 		[self.detailViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
 	}
 }
-
 
 - (void)didAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
@@ -228,7 +228,6 @@
 	}
 }
 
-
 - (void)willAnimateSecondHalfOfRotationFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	if (IS_IPAD() || fromInterfaceOrientation != UIInterfaceOrientationPortraitUpsideDown) {
@@ -236,7 +235,7 @@
 		[self.detailViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
 	}
 }
-
+#pragma clang diagnostic pop
 
 - (CGSize)splitViewSizeForOrientation:(UIInterfaceOrientation)theOrientation
 {
