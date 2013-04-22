@@ -11,6 +11,7 @@
 #import "MGSplitCornersView.h"
 #import "Common.h"
 #import "Constants.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define MG_MASTER_WIDTH                (IS_IPAD() ? IPAD_MASTER_VIEW_WIDTH:IPHONE_MASTER_VIEW_WIDTH)
 // default width of master view in UISplitViewController.(IS_IPAD()?12.0:8.0)
@@ -146,9 +147,6 @@
 		divRect.origin.x = _splitPosition;
 		divRect.size.width = _splitWidth;
 	}
-	_dividerView = [[MGSplitDividerView alloc] initWithFrame:divRect];
-	_dividerView.splitViewController = self;
-	_dividerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"shadow_slide_menu.png"]];
 }
 
 
@@ -903,9 +901,18 @@
 
 	if (changed) {
 		[self layoutSubviews];
+		[self setShadowToDetailView];
 	}
 }
 
+-(void)setShadowToDetailView
+{
+	UIViewController *vc = self.detailViewController;
+	vc.view.layer.shadowOffset = CGSizeMake(-5, 0);
+	vc.view.layer.shadowRadius = 4;
+	vc.view.layer.shadowOpacity = 1;
+	vc.view.layer.shadowColor = [UIColor blackColor].CGColor;
+}
 
 - (MGSplitDividerView *)dividerView
 {
