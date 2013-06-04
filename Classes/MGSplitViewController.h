@@ -15,7 +15,6 @@ typedef enum _MGSplitViewDividerStyle {
 } MGSplitViewDividerStyle;
 
 @class MGSplitDividerView;
-@class CommentsViewController;
 @protocol MGSplitViewControllerDelegate;
 @interface MGSplitViewController : UIViewController  {
 	BOOL _showsMasterInPortrait;
