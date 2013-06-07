@@ -424,8 +424,8 @@
 	}
 	
 	// Create corner views if necessary.
-	MGSplitCornersView *leadingCorners; // top/left of screen in vertical/horizontal split.
-	MGSplitCornersView *trailingCorners; // bottom/right of screen in vertical/horizontal split.
+	MGSplitCornersView *leadingCorners = nil; // top/left of screen in vertical/horizontal split.
+	MGSplitCornersView *trailingCorners = nil; // bottom/right of screen in vertical/horizontal split.
 	if (!_cornerViews) {
 		CGRect cornerRect = CGRectMake(0, 0, 10, 10); // arbitrary, will be resized below.
 		leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
@@ -507,7 +507,7 @@
 	[self.detailViewController viewWillAppear:animated];
 	
 	_reconfigurePopup = YES;
-	[self layoutSubviews];
+
 }
 
 
@@ -519,6 +519,7 @@
 		[self.masterViewController viewDidAppear:animated];
 	}
 	[self.detailViewController viewDidAppear:animated];
+    [self layoutSubviews];
 }
 
 
@@ -940,7 +941,7 @@
 - (UIViewController *)masterViewController
 {
 	if (_viewControllers && [_viewControllers count] > 0) {
-		NSObject *controller = [_viewControllers objectAtIndex:0];
+		id controller = [_viewControllers objectAtIndex:0];
 		if ([controller isKindOfClass:[UIViewController class]]) {
 			return [[controller retain] autorelease];
 		}
@@ -982,7 +983,7 @@
 - (UIViewController *)detailViewController
 {
 	if (_viewControllers && [_viewControllers count] > 1) {
-		NSObject *controller = [_viewControllers objectAtIndex:1];
+        id controller = [_viewControllers objectAtIndex:1];
 		if ([controller isKindOfClass:[UIViewController class]]) {
 			return [[controller retain] autorelease];
 		}
@@ -1073,7 +1074,7 @@
 	_dividerStyle = newStyle;
 	
 	// Reconfigure general appearance and behaviour.
-	float cornerRadius;
+	float cornerRadius = 0.0;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
 		cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
