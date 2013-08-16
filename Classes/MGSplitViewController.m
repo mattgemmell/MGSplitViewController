@@ -23,6 +23,7 @@
 #define MG_ANIMATION_CHANGE_SPLIT_ORIENTATION	@"ChangeSplitOrientation"	// Animation ID for internal use.
 #define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
 
+#define IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 @interface MGSplitViewController (MGPrivateMethods)
 
@@ -234,6 +235,10 @@
 	// Find status bar height by checking which dimension of the applicationFrame is narrower than screen bounds.
 	// Little bit ugly looking, but it'll still work even if they change the status bar height in future.
 	float statusBarHeight = MAX((fullScreenRect.size.width - appFrame.size.width), (fullScreenRect.size.height - appFrame.size.height));
+    
+    // In iOS 7 the status bar is transparent, so don't adjust for it.
+    if (IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+        statusBarHeight = 0;
 	
 	float navigationBarHeight = 0;
 	if ((self.navigationController)&&(!self.navigationController.navigationBarHidden)) {
