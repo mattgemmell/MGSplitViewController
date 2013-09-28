@@ -5,6 +5,16 @@
 //  Created by Matt Gemmell on 26/07/2010.
 //  Copyright 2010 Instinctive Code.
 //
+NSUInteger DeviceSystemMajorVersion() {
+    static NSUInteger _deviceSystemMajorVersion = -1;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _deviceSystemMajorVersion = [[[[[UIDevice currentDevice] systemVersion] componentsSeparatedByString:@"."] objectAtIndex:0] intValue];
+    });
+    return _deviceSystemMajorVersion;
+}
+#define MY_MACRO_NAME (DeviceSystemMajorVersion() < 7)
+//判断 MY_MACRO_NAME 是否为YES 或者 NO
 
 #import "MGSplitViewController.h"
 #import "MGSplitDividerView.h"
@@ -247,7 +257,7 @@
 	}
 	
 	// Account for status bar, which always subtracts from the height (since it's always at the top of the screen).
-	height -= statusBarHeight;
+	height -= (MY_MACRO_NAME?statusBarHeight:0);
 	
 	return CGSizeMake(width, height);
 }
