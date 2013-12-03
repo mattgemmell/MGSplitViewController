@@ -70,7 +70,7 @@
     // Dequeue or create a cell of the appropriate type.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
@@ -89,17 +89,5 @@
 	// When a row is selected, set the detail view controller's detail item to the item associated with the selected row.
     detailViewController.detailItem = [NSString stringWithFormat:@"Row %d", indexPath.row];
 }
-
-
-#pragma mark -
-#pragma mark Memory management
-
-
-- (void)dealloc
-{
-    [detailViewController release];
-    [super dealloc];
-}
-
 
 @end

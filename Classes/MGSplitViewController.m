@@ -205,27 +205,6 @@
 }
 
 
-- (void)willAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.masterViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-}
-
-
-- (void)didAnimateFirstHalfOfRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-	[self.masterViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
-	[self.detailViewController didAnimateFirstHalfOfRotationToInterfaceOrientation:toInterfaceOrientation];
-}
-
-
-- (void)willAnimateSecondHalfOfRotationFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.masterViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
-	[self.detailViewController willAnimateSecondHalfOfRotationFromInterfaceOrientation:fromInterfaceOrientation duration:duration];
-}
-
-
 - (CGSize)splitViewSizeForOrientation:(UIInterfaceOrientation)theOrientation
 {
 	UIScreen *screen = [UIScreen mainScreen];
@@ -441,11 +420,11 @@
 		leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
 		leadingCorners.splitViewController = self;
 		leadingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
-		leadingCorners.cornerRadius = MG_DEFAULT_CORNER_RADIUS;
+		leadingCorners.cornerRadius = [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
 		trailingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
 		trailingCorners.splitViewController = self;
 		trailingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
-		trailingCorners.cornerRadius = MG_DEFAULT_CORNER_RADIUS;
+		trailingCorners.cornerRadius = [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
 		_cornerViews = [[NSArray alloc] initWithObjects:leadingCorners, trailingCorners, nil];
 		
 	} else if ([_cornerViews count] == 2) {
@@ -463,7 +442,7 @@
 	CGRect leadingRect, trailingRect;
 	float radius = leadingCorners.cornerRadius;
 	if (_vertical) { // left/right split
-		cornersWidth = (radius * 2.0) + _splitWidth;
+		cornersWidth = (radius * 2.f) + _splitWidth;
 		cornersHeight = radius;
 		x = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : width - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
 		y = 0;
@@ -474,7 +453,7 @@
 		x = 0;
 		y = ((shouldShowMaster) ? ((masterFirst) ? _splitPosition : height - (_splitPosition + _splitWidth)) : (0 - _splitWidth)) - radius;
 		cornersWidth = radius;
-		cornersHeight = (radius * 2.0) + _splitWidth;
+		cornersHeight = (radius * 2.f) + _splitWidth;
 		leadingRect = CGRectMake(x, y, cornersWidth, cornersHeight); // left corners
 		trailingRect = CGRectMake((width - cornersWidth), y, cornersWidth, cornersHeight); // right corners
 	}
@@ -909,7 +888,7 @@
 	} else {
 		// Apply default constraints if delegate doesn't wish to participate.
 		float minPos = MG_MIN_VIEW_WIDTH;
-		float maxPos = ((_vertical) ? fullSize.width : fullSize.height) - (MG_MIN_VIEW_WIDTH + _splitWidth);
+		float maxPos = (float) (((_vertical) ? fullSize.width : fullSize.height) - (MG_MIN_VIEW_WIDTH + _splitWidth));
 		constrained = (newPosn != _splitPosition && newPosn >= minPos && newPosn <= maxPos);
 	}
 	
@@ -1126,7 +1105,7 @@
 	// Reconfigure general appearance and behaviour.
 	float cornerRadius = 0.0f;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
-		cornerRadius = MG_DEFAULT_CORNER_RADIUS;
+		cornerRadius = [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
 		self.allowsDraggingDivider = NO;
 		
