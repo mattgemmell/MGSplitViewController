@@ -23,6 +23,14 @@
 #define MG_ANIMATION_CHANGE_SPLIT_ORIENTATION	@"ChangeSplitOrientation"	// Animation ID for internal use.
 #define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
 
+#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
+
+#define IOS7_OR_GREATER SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")
+#define PRE_IOS7 SYSTEM_VERSION_LESS_THAN(@"7.0")
 
 @interface MGSplitViewController (MGPrivateMethods)
 
@@ -38,6 +46,12 @@
 
 @end
 
+@interface MGSplitViewController ()
+
+@property (nonatomic, assign) BOOL isDismissing;
+@property (nonatomic, assign) UIEdgeInsets priorContentInsets;
+
+@end
 
 @implementation MGSplitViewController
 
@@ -162,17 +176,16 @@
 #pragma mark -
 #pragma mark View management
 
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    if (self.detailViewController)
-    {
-        return [self.detailViewController shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-    }
-
-    return YES;
+- (NSUInteger)supportedInterfaceOrientations {
+  if ( self.detailViewController ) {
+    return [self.detailViewController supportedInterfaceOrientations];
+  }
+  if ( self.masterViewController ) {
+    return [self.masterViewController supportedInterfaceOrientations];
+  }
+  
+  return UIInterfaceOrientationMaskAll;
 }
-
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
@@ -247,7 +260,7 @@
 	}
 	
 	// Account for status bar, which always subtracts from the height (since it's always at the top of the screen).
-	height -= statusBarHeight;
+	height -= PRE_IOS7 ? statusBarHeight : 0.0;
 	
 	return CGSizeMake(width, height);
 }
@@ -266,7 +279,7 @@
 	float height = fullSize.height;
 	
 	if (NO) { // Just for debugging.
-		NSLog(@"Target orientation is %@, dimensions will be %.0f x %.0f", 
+		DBG(@"Target orientation is %@, dimensions will be %.0f x %.0f",
 			  [self nameOfInterfaceOrientation:theOrientation], width, height);
 	}
 	
@@ -321,9 +334,9 @@
 			if (theView) {
 				theView.frame = masterRect;
 				if (!theView.superview) {
-					[controller viewWillAppear:NO];
+          [self addChildViewController: controller];
 					[self.view addSubview:theView];
-					[controller viewDidAppear:NO];
+          [controller didMoveToParentViewController: self];
 				}
 			}
 		}
@@ -342,7 +355,9 @@
 			if (theView) {
 				theView.frame = detailRect;
 				if (!theView.superview) {
+          [self addChildViewController: controller];
 					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
+          [controller didMoveToParentViewController: self];
 				} else {
 					[self.view bringSubviewToFront:theView];
 				}
@@ -394,9 +409,9 @@
 			if (theView) {
 				theView.frame = masterRect;
 				if (!theView.superview) {
-					[controller viewWillAppear:NO];
+          [self addChildViewController: controller];
 					[self.view addSubview:theView];
-					[controller viewDidAppear:NO];
+          [controller didMoveToParentViewController: self];
 				}
 			}
 		}
@@ -415,7 +430,9 @@
 			if (theView) {
 				theView.frame = detailRect;
 				if (!theView.superview) {
+          [self addChildViewController: controller];
 					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
+          [controller didMoveToParentViewController: self];
 				} else {
 					[self.view bringSubviewToFront:theView];
 				}
@@ -424,8 +441,8 @@
 	}
 	
 	// Create corner views if necessary.
-	MGSplitCornersView *leadingCorners; // top/left of screen in vertical/horizontal split.
-	MGSplitCornersView *trailingCorners; // bottom/right of screen in vertical/horizontal split.
+	MGSplitCornersView *leadingCorners = nil; // top/left of screen in vertical/horizontal split.
+	MGSplitCornersView *trailingCorners = nil; // bottom/right of screen in vertical/horizontal split.
 	if (!_cornerViews) {
 		CGRect cornerRect = CGRectMake(0, 0, 10, 10); // arbitrary, will be resized below.
 		leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
@@ -496,16 +513,18 @@
 	[self layoutSubviewsForInterfaceOrientation:self.interfaceOrientation withAnimation:YES];
 }
 
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  if ( IOS7_OR_GREATER ) {
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+  }
+}
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	
-	if ([self isShowingMaster]) {
-		[self.masterViewController viewWillAppear:animated];
-	}
-	[self.detailViewController viewWillAppear:animated];
-	
+
+  self.isDismissing = NO;
 	_reconfigurePopup = YES;
 	[self layoutSubviews];
 }
@@ -515,21 +534,14 @@
 {
 	[super viewDidAppear:animated];
 	
-	if ([self isShowingMaster]) {
-		[self.masterViewController viewDidAppear:animated];
-	}
-	[self.detailViewController viewDidAppear:animated];
 }
 
 
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-	
-	if ([self isShowingMaster]) {
-		[self.masterViewController viewWillDisappear:animated];
-	}
-	[self.detailViewController viewWillDisappear:animated];
+  self.isDismissing = YES;
+
 }
 
 
@@ -537,12 +549,11 @@
 {
 	[super viewDidDisappear:animated];
 	
-	if ([self isShowingMaster]) {
-		[self.masterViewController viewDidDisappear:animated];
-	}
-	[self.detailViewController viewDidDisappear:animated];
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+  return UIStatusBarStyleLightContent;
+}
 
 #pragma mark -
 #pragma mark Popover handling
@@ -561,10 +572,11 @@
 		// Create and configure popover for our masterViewController.
 		[_hiddenPopoverController release];
 		_hiddenPopoverController = nil;
-		[self.masterViewController viewWillDisappear:NO];
+    [self.masterViewController willMoveToParentViewController: nil];
+    [self.masterViewController.view removeFromSuperview];
+    [self.masterViewController removeFromParentViewController];
 		_hiddenPopoverController = [[UIPopoverController alloc] initWithContentViewController:self.masterViewController];
-		[self.masterViewController viewDidDisappear:NO];
-		
+
 		// Create and configure _barButtonItem.
 		_barButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Master", nil) 
 														  style:UIBarButtonItemStyleBordered 
@@ -581,7 +593,7 @@
 		
 	} else if (!inPopover && _hiddenPopoverController && _barButtonItem) {
 		// I know this looks strange, but it fixes a bizarre issue with UIPopoverController leaving masterViewController's views in disarray.
-		[_hiddenPopoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+		[_hiddenPopoverController presentPopoverFromRect: CGRectMake(0.0, 0.0, 1.0, 1.0) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
 		
 		// Remove master from popover and destroy popover, if it exists.
 		[_hiddenPopoverController dismissPopoverAnimated:NO];
@@ -940,7 +952,7 @@
 - (UIViewController *)masterViewController
 {
 	if (_viewControllers && [_viewControllers count] > 0) {
-		NSObject *controller = [_viewControllers objectAtIndex:0];
+		UIViewController* controller = [_viewControllers objectAtIndex:0];
 		if ([controller isKindOfClass:[UIViewController class]]) {
 			return [[controller retain] autorelease];
 		}
@@ -982,7 +994,7 @@
 - (UIViewController *)detailViewController
 {
 	if (_viewControllers && [_viewControllers count] > 1) {
-		NSObject *controller = [_viewControllers objectAtIndex:1];
+		UIViewController* controller = [_viewControllers objectAtIndex:1];
 		if ([controller isKindOfClass:[UIViewController class]]) {
 			return [[controller retain] autorelease];
 		}
@@ -1073,7 +1085,7 @@
 	_dividerStyle = newStyle;
 	
 	// Reconfigure general appearance and behaviour.
-	float cornerRadius;
+	float cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
 		cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
@@ -1134,5 +1146,47 @@
 @synthesize allowsDraggingDivider;
 @synthesize dividerStyle;
 
+#pragma mark GameChanger helpers
+- (void)animateView:(UIScrollView *)view toMatchKeyboardNotification:(NSNotification *)notification {
+  if ( self.isDismissing ) {
+    return;
+  }
+
+  NSDictionary* userInfo = notification.userInfo;
+  CGRect endFrame = [[userInfo objectForKey: UIKeyboardFrameEndUserInfoKey] CGRectValue];
+  CGFloat duration = [[userInfo objectForKey: UIKeyboardAnimationDurationUserInfoKey] floatValue];
+  UIViewAnimationOptions curveType = (UIViewAnimationOptions) [[userInfo objectForKey: UIKeyboardAnimationCurveUserInfoKey] integerValue];
+  CGRect localEnd = [view.superview convertRect: endFrame fromView: nil];
+
+
+  UIEdgeInsets contentInsets;
+  if ( [notification.name isEqualToString:UIKeyboardWillShowNotification] ) {
+    // keyboard is sliding up
+    self.priorContentInsets = view.contentInset;
+    contentInsets = view.contentInset;
+    contentInsets.bottom += self.view.bounds.size.height - localEnd.origin.y;
+  } else {
+    // keyboard is sliding down
+    contentInsets = self.priorContentInsets;
+  }
+  if (duration > 0) {
+    [UIView animateWithDuration: duration
+                          delay: 0.0
+                        options: curveType << 16 | UIViewAnimationOptionBeginFromCurrentState
+                     animations: ^{
+                       view.contentInset = contentInsets;
+                       view.scrollIndicatorInsets = contentInsets;
+                     }
+                     completion: ^(BOOL finished){
+                     }];
+  } else {
+    view.contentInset = contentInsets;
+    view.scrollIndicatorInsets = contentInsets;
+  }
+}
+
+- (void)resetContentInsetsOfView:(UIScrollView *)view {
+  view.contentInset = self.priorContentInsets;
+}
 
 @end
