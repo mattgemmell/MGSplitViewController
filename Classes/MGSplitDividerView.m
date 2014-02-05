@@ -49,8 +49,8 @@
 		CGRect bounds = self.bounds;
 		CGColorSpaceRef rgb = CGColorSpaceCreateDeviceRGB();
 		CGFloat locations[2] = {0, 1};
-		CGFloat components[8] = {	0.988, 0.988, 0.988, 1.0,  // light
-									0.875, 0.875, 0.875, 1.0 };// dark
+		CGFloat components[8] = {	0.988f, 0.988f, 0.988f, 1.0f,  // light
+									0.875f, 0.875f, 0.875f, 1.0f };// dark
 		CGGradientRef gradient = CGGradientCreateWithColorComponents (rgb, components, locations, 2);
 		CGContextRef context = UIGraphicsGetCurrentContext();
 		CGPoint start, end;
@@ -69,7 +69,7 @@
 		
 		// Draw borders.
 		float borderThickness = 1.0;
-		[[UIColor colorWithWhite:0.7 alpha:1.0] set];
+		[[UIColor colorWithWhite:0.7f alpha:1.0f] set];
 		CGRect borderRect = bounds;
 		if (splitViewController.vertical) {
 			borderRect.size.width = borderThickness;
@@ -103,12 +103,12 @@
 	
 	// Draw grip in centred in rect.
 	CGRect gripRect = CGRectMake(0, 0, width, height);
-	gripRect.origin.x = ((rect.size.width - gripRect.size.width) / 2.0);
-	gripRect.origin.y = ((rect.size.height - gripRect.size.height) / 2.0);
+	gripRect.origin.x = ((rect.size.width - gripRect.size.width) / 2.0f);
+	gripRect.origin.y = ((rect.size.height - gripRect.size.height) / 2.0f);
 	
 	float stripThickness = 1.0;
-	UIColor *stripColor = [UIColor colorWithWhite:0.35 alpha:1.0];
-	UIColor *lightColor = [UIColor colorWithWhite:1.0 alpha:1.0];
+	UIColor *stripColor = [UIColor colorWithWhite:0.35f alpha:1.0f];
+	UIColor *lightColor = [UIColor colorWithWhite:1.0f alpha:1.0f];
 	float space = 3.0;
 	if (splitViewController.vertical) {
 		gripRect.size.width = stripThickness;

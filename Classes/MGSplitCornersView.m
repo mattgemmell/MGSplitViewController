@@ -8,6 +8,8 @@
 
 #import "MGSplitCornersView.h"
 
+CGFloat deg2Rad(CGFloat degrees);
+CGFloat rad2Deg(CGFloat radians);
 
 @implementation MGSplitCornersView
 
@@ -43,17 +45,17 @@
 #pragma mark Geometry helpers
 
 
-double deg2Rad(double degrees)
+CGFloat deg2Rad(CGFloat degrees)
 {
 	// Converts degrees to radians.
-	return degrees * (M_PI / 180.0);
+	return (CGFloat) (degrees * (M_PI / 180.0));
 }
 
 
-double rad2Deg(double radians)
+CGFloat rad2Deg(CGFloat radians)
 {
 	// Converts radians to degrees.
-	return radians * (180 / M_PI);
+	return (CGFloat) (radians * (180 / M_PI));
 }
 
 
