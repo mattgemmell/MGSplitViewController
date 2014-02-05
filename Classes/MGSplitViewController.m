@@ -148,6 +148,8 @@
 - (void)dealloc
 {
 	_delegate = nil;
+	[self.masterViewController release];
+	[self.detailViewController release];
 	[self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 	[_viewControllers release];
 	[_barButtonItem release];
@@ -424,8 +426,8 @@
 	}
 	
 	// Create corner views if necessary.
-	MGSplitCornersView *leadingCorners; // top/left of screen in vertical/horizontal split.
-	MGSplitCornersView *trailingCorners; // bottom/right of screen in vertical/horizontal split.
+	MGSplitCornersView *leadingCorners = nil; // top/left of screen in vertical/horizontal split.
+	MGSplitCornersView *trailingCorners = nil; // bottom/right of screen in vertical/horizontal split.
 	if (!_cornerViews) {
 		CGRect cornerRect = CGRectMake(0, 0, 10, 10); // arbitrary, will be resized below.
 		leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
@@ -569,7 +571,7 @@
 		_barButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Master", nil) 
 														  style:UIBarButtonItemStyleBordered 
 														 target:self 
-														 action:@selector(showMasterPopover:)];
+														 action:(self.togglesMasterPopover ? @selector(toggleMasterPopover:) : @selector(showMasterPopover:))];
 		
 		// Inform delegate of this state of affairs.
 		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:willHideViewController:withBarButtonItem:forPopoverController:)]) {
@@ -707,6 +709,36 @@
 }
 
 
+- (void) setTogglesMasterPopover:(BOOL)flag {
+
+	togglesMasterPopover = flag;
+
+	if (!_barButtonItem)
+	return;
+		
+	_barButtonItem.action = flag ? @selector(toggleMasterPopover:) : @selector(showMasterPopover:);	
+
+}
+
+- (IBAction)toggleMasterPopover:(id)sender 
+{
+
+	if (!_hiddenPopoverController)
+	return;
+	
+	if (_hiddenPopoverController.popoverVisible) {
+		
+		[self hideMasterPopover:sender];
+		
+	} else {
+	
+		[self showMasterPopover:sender];
+	
+	}
+
+}
+
+
 - (IBAction)showMasterPopover:(id)sender
 {
 	if (_hiddenPopoverController && !(_hiddenPopoverController.popoverVisible)) {
@@ -720,6 +752,24 @@
 		// Show popover.
 		[_hiddenPopoverController presentPopoverFromBarButtonItem:_barButtonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 	}
+}
+
+
+- (IBAction)hideMasterPopover:(id)sender 
+{
+
+	if(_hiddenPopoverController && _hiddenPopoverController.popoverVisible) {
+		
+		if (_delegate && [_delegate respondsToSelector:@selector(splitViewController:popoverController:willDismissViewController:)]) {
+		
+			[(NSObject <MGSplitViewControllerDelegate> *)_delegate splitViewController:self popoverController:_hiddenPopoverController willDismissViewController:self.masterViewController];
+		
+		}
+		
+		[_hiddenPopoverController dismissPopoverAnimated:YES];
+	
+	}
+
 }
 
 
@@ -1073,7 +1123,7 @@
 	_dividerStyle = newStyle;
 	
 	// Reconfigure general appearance and behaviour.
-	float cornerRadius;
+	float cornerRadius = 0.0f;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
 		cornerRadius = MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
@@ -1125,14 +1175,15 @@
 @synthesize showsMasterInLandscape;
 @synthesize vertical;
 @synthesize delegate;
-@synthesize viewControllers;
+@synthesize viewControllers = _viewControllers;
 @synthesize masterViewController;
 @synthesize detailViewController;
-@synthesize dividerView;
+@synthesize dividerView = _dividerView;
 @synthesize splitPosition;
 @synthesize splitWidth;
 @synthesize allowsDraggingDivider;
 @synthesize dividerStyle;
 
+@synthesize togglesMasterPopover;
 
 @end
