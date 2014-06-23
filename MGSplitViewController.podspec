@@ -8,21 +8,21 @@
 
 Pod::Spec.new do |s|
 
-  s.name         = "MGSplitViewController"
-  s.version      = "1.0.0"
-  s.summary      = "A flexible, advanced split-view controller for iPad developers.."
-  s.description  = <<-DESC
+  s.name          = "MGSplitViewController"
+  s.version       = "1.0.0"
+  s.summary       = "A flexible, advanced split-view controller for iPad developers.."
+  s.description   = <<-DESC
                    MGSplitViewController is a replacement for UISplitViewController, with various useful enhancements.
                    DESC
 
-  s.homepage     = "https://github.com/asprega/MGSplitViewController"
-  s.license      = "BSD"
-  s.author             = { "Andrea Sprega" => "asprega@vendini.com" }
-  s.platform     = :ios, "5.0"
-  s.source       = { :git => "https://github.com/asprega/MGSplitViewController.git", :tag => 'v1.0.0' }
+  s.homepage      = "https://github.com/asprega/MGSplitViewController"
+  s.license       = "BSD"
+  s.author        = { "Andrea Sprega" => "asprega@vendini.com" }
+  s.platform      = :ios, "5.0"
+  s.source        = { :git => "https://github.com/asprega/MGSplitViewController.git", :tag => 'v1.0.0' }
   s.source_files  = "Classes", "Classes/**/*.{h,m}"
   s.exclude_files = "Classes/Exclude"
-  s.requires_arc = true
-  # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
+  s.requires_arc  = true
+  # s.xcconfig    = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
 
 end
