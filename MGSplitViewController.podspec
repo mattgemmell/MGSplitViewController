@@ -15,11 +15,11 @@ Pod::Spec.new do |s|
                    MGSplitViewController is a replacement for UISplitViewController, with various useful enhancements.
                    DESC
 
-  s.homepage     = "https://github.com/tafax/MGSplitViewController"
+  s.homepage     = "https://github.com/asprega/MGSplitViewController"
   s.license      = "BSD"
-  s.author             = { "Matteo Tafani Alunno" => "mtafanialunno@vendini.com" }
+  s.author             = { "Andrea Sprega" => "asprega@vendini.com" }
   s.platform     = :ios, "5.0"
-  s.source       = { :git => "https://github.com/tafax/MGSplitViewController.git", :tag => 'v1.0.0' }
+  s.source       = { :git => "https://github.com/asprega/MGSplitViewController.git", :tag => 'v1.0.0' }
   s.source_files  = "Classes", "Classes/**/*.{h,m}"
   s.exclude_files = "Classes/Exclude"
   s.requires_arc = true
