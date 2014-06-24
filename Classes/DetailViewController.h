@@ -22,9 +22,9 @@
     UILabel *detailDescriptionLabel;
 }
 
-@property (nonatomic, retain) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, retain) id detailItem;
-@property (nonatomic, retain) IBOutlet UILabel *detailDescriptionLabel;
+@property (nonatomic, strong) IBOutlet UIToolbar *toolbar;
+@property (nonatomic, strong) id detailItem;
+@property (nonatomic, strong) IBOutlet UILabel *detailDescriptionLabel;
 
 - (IBAction)toggleMasterView:(id)sender;
 - (IBAction)toggleVertical:(id)sender;
