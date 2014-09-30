@@ -10,29 +10,29 @@
 	<string>MGSplitView</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>B87E3A15-8AE8-449E-80A8-092ACB80347C</key>
+		<key>5033EDB6B36AFC1F9AB7153D494FDE66318C7E8E</key>
 		<string>https://github.com/asprega/MGSplitViewController.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>MGSplitView.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>B87E3A15-8AE8-449E-80A8-092ACB80347C</key>
+		<key>5033EDB6B36AFC1F9AB7153D494FDE66318C7E8E</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/asprega/MGSplitViewController.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>B87E3A15-8AE8-449E-80A8-092ACB80347C</string>
+	<string>5033EDB6B36AFC1F9AB7153D494FDE66318C7E8E</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>B87E3A15-8AE8-449E-80A8-092ACB80347C</string>
+			<string>5033EDB6B36AFC1F9AB7153D494FDE66318C7E8E</string>
 			<key>IDESourceControlWCCName</key>
 			<string>MGSplitViewController</string>
 		</dict>

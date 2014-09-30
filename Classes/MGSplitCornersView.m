@@ -34,7 +34,6 @@
 - (void)dealloc
 {
 	self.cornerBackgroundColor = nil;
-	
 }
 
 

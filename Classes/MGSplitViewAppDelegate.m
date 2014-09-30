@@ -30,7 +30,9 @@
 		splitViewController.splitWidth = 15.0; // make it wide enough to actually drag!
 		splitViewController.allowsDraggingDivider = YES;
 	}
-	
+
+    window.rootViewController = self.splitViewController;
+
     return YES;
 }
 

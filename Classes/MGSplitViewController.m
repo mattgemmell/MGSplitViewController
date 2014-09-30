@@ -23,8 +23,6 @@
 #define MG_ANIMATION_CHANGE_SPLIT_ORIENTATION	@"ChangeSplitOrientation"	// Animation ID for internal use.
 #define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
 
-#define IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-
 @interface MGSplitViewController (MGPrivateMethods)
 
 - (void)setup;
@@ -73,7 +71,7 @@
 
 - (BOOL)isLandscape
 {
-	return UIInterfaceOrientationIsLandscape(self.interfaceOrientation);
+	return UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]);
 }
 
 
@@ -86,7 +84,7 @@
 
 - (BOOL)shouldShowMaster
 {
-	return [self shouldShowMasterForInterfaceOrientation:self.interfaceOrientation];
+	return [self shouldShowMasterForInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
 }
 
 
@@ -155,7 +153,6 @@
 	self.masterViewController = nil;
 	self.detailViewController = nil;
 	[self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-	
 }
 
 
@@ -216,8 +213,9 @@
 	float statusBarHeight = MAX((fullScreenRect.size.width - appFrame.size.width), (fullScreenRect.size.height - appFrame.size.height));
     
     // In iOS 7 the status bar is transparent, so don't adjust for it.
-    if (IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
+    if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
         statusBarHeight = 0;
+    }
 	
 	float navigationBarHeight = 0;
 	if ((self.navigationController)&&(!self.navigationController.navigationBarHidden)) {
@@ -228,8 +226,8 @@
 	float width = fullScreenRect.size.width;
 	float height = fullScreenRect.size.height;
 	
-	// Correct for orientation.
-	if (UIInterfaceOrientationIsLandscape(theOrientation)) {
+    // Correct for orientation (only for iOS7.1 and earlier, since iOS8 it will do it automatically).
+	if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1 && UIInterfaceOrientationIsLandscape(theOrientation)) {
 		width = height;
 		height = fullScreenRect.size.width;
 	}
@@ -420,11 +418,11 @@
 		leadingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
 		leadingCorners.splitViewController = self;
 		leadingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
-		leadingCorners.cornerRadius = [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
+		leadingCorners.cornerRadius = NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
 		trailingCorners = [[MGSplitCornersView alloc] initWithFrame:cornerRect];
 		trailingCorners.splitViewController = self;
 		trailingCorners.cornerBackgroundColor = MG_DEFAULT_CORNER_COLOR;
-		trailingCorners.cornerRadius = [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
+		trailingCorners.cornerRadius = NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
 		_cornerViews = [[NSArray alloc] initWithObjects:leadingCorners, trailingCorners, nil];
 		
 	} else if ([_cornerViews count] == 2) {
@@ -567,8 +565,11 @@
 		
 	} else if (!inPopover && _hiddenPopoverController && _barButtonItem) {
 		// I know this looks strange, but it fixes a bizarre issue with UIPopoverController leaving masterViewController's views in disarray.
-		[_hiddenPopoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
-		
+        // It does also break stuff on iOS8, so we disable it.
+        if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) {
+            [_hiddenPopoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+        }
+
 		// Remove master from popover and destroy popover, if it exists.
 		[_hiddenPopoverController dismissPopoverAnimated:NO];
 		_hiddenPopoverController = nil;
@@ -1105,7 +1106,7 @@
 	// Reconfigure general appearance and behaviour.
 	float cornerRadius = 0.0f;
 	if (_dividerStyle == MGSplitViewDividerStyleThin) {
-		cornerRadius = [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
+		cornerRadius = NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0 ? 0 : MG_DEFAULT_CORNER_RADIUS;
 		_splitWidth = MG_DEFAULT_SPLIT_WIDTH;
 		self.allowsDraggingDivider = NO;
 		
