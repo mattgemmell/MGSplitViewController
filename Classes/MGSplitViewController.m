@@ -241,7 +241,8 @@
 	float height = fullScreenRect.size.height;
 	
 	// Correct for orientation.
-	if (UIInterfaceOrientationIsLandscape(theOrientation)) {
+	//fix in ios8,with and height exchange error
+	if ([[[UIDevice currentDevice]systemVersion] floatValue] < 8.0 && UIInterfaceOrientationIsLandscape(theOrientation)) {
 		width = height;
 		height = fullScreenRect.size.width;
 	}
