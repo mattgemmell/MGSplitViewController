@@ -151,7 +151,7 @@
 {
 	_delegate = nil;
 	self.masterViewController = nil;
-	self.detailViewController = nil;
+	self.detailViewController = [NSNull null];
 	[self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
