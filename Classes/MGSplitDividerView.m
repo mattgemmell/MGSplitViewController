@@ -180,6 +180,11 @@
 #pragma mark -
 #pragma mark Interaction
 
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [splitViewController.delegate splitViewController:splitViewController didMoveSplitToPosition:splitViewController.splitPosition];
+}
+
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {

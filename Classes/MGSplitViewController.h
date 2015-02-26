@@ -109,6 +109,9 @@ typedef enum _MGSplitViewDividerStyle {
 // Called when split position will change to the given pixel value (relative to left if split is vertical, or to top if horizontal).
 - (void)splitViewController:(MGSplitViewController*)svc willMoveSplitToPosition:(float)position;
 
+// Called when split position did change to the given pixel value (relative to left if split is vertical, or to top if horizontal).
+- (void)splitViewController:(MGSplitViewController*)svc didMoveSplitToPosition:(float)position;
+
 // Called before split position is changed to the given pixel value (relative to left if split is vertical, or to top if horizontal).
 // Note that viewSize is the current size of the entire split-view; i.e. the area enclosing the master, divider and detail views.
 - (float)splitViewController:(MGSplitViewController *)svc constrainSplitPosition:(float)proposedPosition splitViewSize:(CGSize)viewSize;
