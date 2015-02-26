@@ -292,7 +292,14 @@
 			newFrame.size.width = _splitWidth;
 			dividerRect = newFrame;
 			
-			newFrame.origin.x += newFrame.size.width;
+            if(self.draggingDividerMovesDetail)
+            {
+                newFrame.origin.x = _splitPosition;
+            }
+            else
+            {
+                newFrame.origin.x += newFrame.size.width;
+            }
 			newFrame.size.width = width - newFrame.origin.x;
 			detailRect = newFrame;
 			
@@ -342,9 +349,7 @@
 			if (theView) {
 				theView.frame = detailRect;
 				if (!theView.superview) {
-					[self.view insertSubview:theView aboveSubview:self.masterViewController.view];
-				} else {
-					[self.view bringSubviewToFront:theView];
+                    [self.view insertSubview:theView belowSubview:_dividerView];
 				}
 			}
 		}
@@ -1030,7 +1035,6 @@
 		[_dividerView release];
 		_dividerView = [divider retain];
 		_dividerView.splitViewController = self;
-		_dividerView.backgroundColor = MG_DEFAULT_CORNER_COLOR;
 		if ([self isShowingMaster]) {
 			[self layoutSubviews];
 		}
