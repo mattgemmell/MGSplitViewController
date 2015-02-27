@@ -3,6 +3,8 @@ MGSplitViewController
 
 MGSplitViewController is a replacement for UISplitViewController, with various useful enhancements.
 
+[_This fork replaces manual reference counting with ARC, as implemented by Clang in Xcode4.2 and later. This branch, iOS5Target, uses weak references for greater safety, but requires a minimum of iOS 5.1 as a deployment target._ - Dafydd Williams]
+
 
 Donations
 ---------

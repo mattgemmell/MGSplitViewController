@@ -7,8 +7,8 @@
 //
 
 #import "MGSplitViewAppDelegate.h"
-#import "RootViewController.h"
-#import "DetailViewController.h"
+#import "MGRootViewController.h"
+#import "MGDetailViewController.h"
 #import "MGSplitViewController.h"
 
 @implementation MGSplitViewAppDelegate
@@ -35,13 +35,6 @@
 }
 
 
-- (void)dealloc
-{
-    [splitViewController release];
-    [window release];
-	
-    [super dealloc];
-}
 
 
 @end
