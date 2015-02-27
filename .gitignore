@@ -2,3 +2,5 @@
 *.perspectivev3
 build
 
+MGSplitView.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+MGSplitView.xcodeproj/project.xcworkspace/xcshareddata/MGSplitView.xccheckout
