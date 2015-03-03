@@ -250,7 +250,9 @@
 			
 			newFrame.origin.x += newFrame.size.width;
 			newFrame.size.width = _splitWidth;
-			dividerRect = newFrame;
+            dividerRect = _dividerView.frame;
+            dividerRect.origin.x = newFrame.origin.x;
+            dividerRect.size.width = newFrame.size.width;
 			
             if(self.draggingDividerMovesDetail)
             {
