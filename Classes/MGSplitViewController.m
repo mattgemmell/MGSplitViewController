@@ -150,7 +150,7 @@
 - (void)dealloc
 {
 	_delegate = nil;
-    _viewControllers = nil;
+	_viewControllers = nil;
 	[self.view.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
 }
 
