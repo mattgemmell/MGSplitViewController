@@ -24,7 +24,7 @@
 #define MG_ANIMATION_CHANGE_SUBVIEWS_ORDER		@"ChangeSubviewsOrder"	// Animation ID for internal use.
 
 
-@interface MGSplitViewController (MGPrivateMethods)
+@interface MGSplitViewController (MGPrivateMethods) <MGSplitDividerViewDelegate>
 
 - (void)setup;
 - (void)layoutSubviews;
@@ -248,7 +248,7 @@
 			newFrame.size.width = _splitPosition;
 			masterRect = newFrame;
 			
-			newFrame.origin.x += newFrame.size.width;
+			newFrame.origin.x += (newFrame.size.width+_dividerViewOffset);
 			newFrame.size.width = _splitWidth;
             dividerRect = _dividerView.frame;
             dividerRect.origin.x = newFrame.origin.x;
@@ -684,6 +684,22 @@
 	}
 }
 
+#pragma mark - MGSplitDividerViewDelegate
+- (void)dividerViewDidTap:(MGSplitDividerView *)dividerView
+{
+    if(_delegate && [_delegate respondsToSelector:@selector(splitViewControllerDidTapDividerView:)])
+    {
+        [_delegate splitViewControllerDidTapDividerView:self];
+    }
+}
+
+- (void)dividerViewDidEndTouch:(MGSplitDividerView *)dividerView
+{
+    if(_delegate && [_delegate respondsToSelector:@selector(splitViewController:didMoveSplitToPosition:)])
+    {
+        [_delegate splitViewController:self didMoveSplitToPosition:self.splitPosition];
+    }
+}
 
 #pragma mark -
 #pragma mark Accessors and properties
@@ -990,6 +1006,7 @@
 		[_dividerView removeFromSuperview];
 		_dividerView = divider;
 		_dividerView.splitViewController = self;
+        _dividerView.delegate = self;
 		if ([self isShowingMaster]) {
 			[self layoutSubviews];
 		}

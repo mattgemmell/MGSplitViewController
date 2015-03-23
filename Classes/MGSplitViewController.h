@@ -47,6 +47,7 @@ typedef enum _MGSplitViewDividerStyle {
 @property (nonatomic, strong) IBOutlet UIViewController *masterViewController; // convenience.
 @property (nonatomic, strong) IBOutlet UIViewController *detailViewController; // convenience.
 @property (nonatomic, strong) MGSplitDividerView *dividerView; // the view which draws the divider/split between master and detail.
+@property (nonatomic, assign) float dividerViewOffset; // offset of divider view in case you want a new position
 @property (nonatomic, assign) MGSplitViewDividerStyle dividerStyle; // style (and behaviour) of the divider between master and detail.
 
 @property (nonatomic, readonly, getter=isLandscape) BOOL landscape; // returns YES if this view controller is in either of the two Landscape orientations, else NO.
@@ -116,5 +117,8 @@ typedef enum _MGSplitViewDividerStyle {
 // Called before split position is changed to the given pixel value (relative to left if split is vertical, or to top if horizontal).
 // Note that viewSize is the current size of the entire split-view; i.e. the area enclosing the master, divider and detail views.
 - (float)splitViewController:(MGSplitViewController *)svc constrainSplitPosition:(float)proposedPosition splitViewSize:(CGSize)viewSize;
+
+// Called when dividerView is tapped
+- (void)splitViewControllerDidTapDividerView: (MGSplitViewController*)svc;
 
 @end

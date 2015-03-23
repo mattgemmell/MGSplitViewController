@@ -181,7 +181,22 @@
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [splitViewController.delegate splitViewController:splitViewController didMoveSplitToPosition:splitViewController.splitPosition];
+    if (self.delegate)
+    {
+        UITouch *touch = [touches anyObject];
+        if (touch.tapCount == 1)
+        {
+            if ([self.delegate respondsToSelector:@selector(dividerViewDidTap:)])
+            {
+                [self.delegate dividerViewDidTap:self];
+            }
+        }
+        
+        if ([self.delegate respondsToSelector:@selector(dividerViewDidEndTouch:)])
+        {
+            [self.delegate dividerViewDidEndTouch:self];
+        }
+    }    
 }
 
 
