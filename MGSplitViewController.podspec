@@ -19,8 +19,9 @@ Pod::Spec.new do |s|
   s.license       = "BSD"
   s.author        = { "Andrea Sprega" => "asprega@vendini.com" }
   s.platform      = :ios, "5.0"
-  s.source        = { :git => "https://github.com/nbonamy/MGSplitViewController.git" }
+  s.source        = { :git => "https://github.com/asprega/MGSplitViewController.git", :tag => 'v2.0.0' }
   s.source_files  = "Classes/MGSplit{ViewController,DividerView,CornersView}.*"
+  s.exclude_files = "Classes/Exclude"
   s.requires_arc  = true
   # s.xcconfig    = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
 
