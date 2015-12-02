@@ -215,6 +215,12 @@
 
 - (void)layoutSubviewsForInterfaceOrientation:(UIInterfaceOrientation)theOrientation withAnimation:(BOOL)animate
 {
+    [self layoutSubviewsForInterfaceOrientation:theOrientation withAnimation:animate AndResizeDetail:YES];
+}
+
+
+- (void)layoutSubviewsForInterfaceOrientation:(UIInterfaceOrientation)theOrientation withAnimation:(BOOL)animate AndResizeDetail: (BOOL) resizeDetail
+{
 	if (_reconfigurePopup) {
 		[self reconfigureForMasterInPopover:![self shouldShowMasterForInterfaceOrientation:theOrientation]];
 	}
@@ -247,22 +253,32 @@
 			
 			newFrame.size.width = _splitPosition;
 			masterRect = newFrame;
-			
-			newFrame.origin.x += (newFrame.size.width+_dividerViewOffset);
-			newFrame.size.width = _splitWidth;
+
+            newFrame.origin.x += (newFrame.size.width+_dividerViewOffset);
+            newFrame.size.width = _splitWidth;
             dividerRect = _dividerView.frame;
             dividerRect.origin.x = newFrame.origin.x;
             dividerRect.size.width = newFrame.size.width;
-			
-            if(self.draggingDividerMovesDetail)
+
+            if (resizeDetail)
             {
-                newFrame.origin.x = _splitPosition;
+                if(self.draggingDividerMovesDetail)
+                {
+                    newFrame.origin.x = _splitPosition;
+                }
+                else
+                {
+                    newFrame.origin.x += newFrame.size.width;
+                }
+                newFrame.size.width = width - newFrame.origin.x;
             }
             else
             {
-                newFrame.origin.x += newFrame.size.width;
+                newFrame = self.detailViewController.view.frame;
+                newFrame.origin.x = _splitPosition;
+                self.detailViewController.view.frame = newFrame;
             }
-			newFrame.size.width = width - newFrame.origin.x;
+            
 			detailRect = newFrame;
 			
 		} else {
@@ -458,7 +474,12 @@
 
 - (void)layoutSubviews
 {
-	[self layoutSubviewsForInterfaceOrientation:self.interfaceOrientation withAnimation:YES];
+    [self layoutSubviewsAndResizeDetail:YES];
+}
+
+- (void)layoutSubviewsAndResizeDetail: (BOOL) resizeDetail
+{
+	[self layoutSubviewsForInterfaceOrientation:self.interfaceOrientation withAnimation:YES AndResizeDetail:resizeDetail];
 }
 
 
@@ -823,6 +844,11 @@
 
 - (void)setSplitPosition:(float)posn
 {
+    [self setSplitPosition:posn andResizeDetail:YES];
+}
+
+- (void)setSplitPosition:(float)posn andResizeDetail: (BOOL) resizeDetail
+{
 	// Check to see if delegate wishes to constrain the position.
 	float newPosn = posn;
 	BOOL constrained = NO;
@@ -851,7 +877,7 @@
 		}
 		
 		if ([self isShowingMaster]) {
-			[self layoutSubviews];
+			[self layoutSubviewsAndResizeDetail:resizeDetail];
 		}
 	}
 }
@@ -859,14 +885,29 @@
 
 - (void)setSplitPosition:(float)posn animated:(BOOL)animate
 {
-	BOOL shouldAnimate = (animate && [self isShowingMaster]);
-	if (shouldAnimate) {
-		[UIView beginAnimations:@"SplitPosition" context:nil];
-	}
-	[self setSplitPosition:posn];
-	if (shouldAnimate) {
-		[UIView commitAnimations];
-	}
+    [self setSplitPosition:posn animated:animate andResizeDetail:YES];
+}
+
+
+- (void)setSplitPosition:(float)posn animated:(BOOL)animate andResizeDetail: (BOOL) resizeDetail
+{
+    float duration = 0.f;
+	if(animate && [self isShowingMaster])
+    {
+        duration = 0.8f;
+    }
+    
+    [UIView animateWithDuration:duration
+                          delay:0
+         usingSpringWithDamping:0.6f
+          initialSpringVelocity:1.0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         [self setSplitPosition:posn andResizeDetail:resizeDetail];
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
 }
 
 

@@ -210,7 +210,8 @@
 		if (!splitViewController.masterBeforeDetail) {
 			offset = -offset;
 		}
-		splitViewController.splitPosition = splitViewController.splitPosition + offset;
+        
+        [splitViewController setSplitPosition:splitViewController.splitPosition + offset andResizeDetail:NO];
 	}
 }
 

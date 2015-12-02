@@ -61,6 +61,9 @@ typedef enum _MGSplitViewDividerStyle {
 
 // Conveniences for you, because I care.
 - (BOOL)isShowingMaster;
+
+- (void)setSplitPosition:(float)posn andResizeDetail: (BOOL) resizeDetail;
+- (void)setSplitPosition:(float)posn animated:(BOOL)animate andResizeDetail: (BOOL) resizeDetail;
 - (void)setSplitPosition:(float)posn animated:(BOOL)animate; // Allows for animation of splitPosition changes. The property's regular setter is not animated.
 /* Note:	splitPosition is the width (in a left/right split, or height in a top/bottom split) of the master view.
 			It is relative to the appropriate side of the splitView, which can be any of the four sides depending on the values in isMasterBeforeDetail and isVertical:
