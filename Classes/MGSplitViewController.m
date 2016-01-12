@@ -188,8 +188,7 @@
 	}
 	
 	// Re-tile views.
-	_reconfigurePopup = YES;
-	[self layoutSubviewsForInterfaceOrientation:toInterfaceOrientation withAnimation:YES];
+	_reconfigurePopup = YES;	
 }
 
 
