@@ -492,7 +492,7 @@
 	[self.detailViewController viewWillAppear:animated];
 	
 	_reconfigurePopup = YES;
-	[self layoutSubviews];
+	[self layoutSubviewsAndResizeDetail:NO];
 }
 
 
