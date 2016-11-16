@@ -24,7 +24,7 @@
 {
     [super viewDidLoad];
     self.clearsSelectionOnViewWillAppear = NO;
-    self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
+    self.preferredContentSize = CGSizeMake(320.0, 600.0);
 }
 
 
@@ -70,12 +70,12 @@
     // Dequeue or create a cell of the appropriate type.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
     // Configure the cell.
-    cell.textLabel.text = [NSString stringWithFormat:@"Row %d", indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"Row %d", [[NSNumber numberWithInteger:indexPath.row] intValue]];
     return cell;
 }
 
@@ -87,19 +87,7 @@
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	// When a row is selected, set the detail view controller's detail item to the item associated with the selected row.
-    detailViewController.detailItem = [NSString stringWithFormat:@"Row %d", indexPath.row];
+    detailViewController.detailItem = [NSString stringWithFormat:@"Row %d", [[NSNumber numberWithInteger:indexPath.row] intValue]];
 }
-
-
-#pragma mark -
-#pragma mark Memory management
-
-
-- (void)dealloc
-{
-    [detailViewController release];
-    [super dealloc];
-}
-
 
 @end

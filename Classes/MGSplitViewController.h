@@ -31,9 +31,10 @@ typedef enum _MGSplitViewDividerStyle {
 	float _splitPosition;
 	BOOL _reconfigurePopup;
 	MGSplitViewDividerStyle _dividerStyle; // Meta-setting which configures several aspects of appearance and behaviour.
+	BOOL togglesMasterPopover;
 }
 
-@property (nonatomic, assign) IBOutlet id <MGSplitViewControllerDelegate> delegate;
+@property (nonatomic, unsafe_unretained) IBOutlet id <MGSplitViewControllerDelegate> delegate;
 @property (nonatomic, assign) BOOL showsMasterInPortrait; // applies to both portrait orientations (default NO)
 @property (nonatomic, assign) BOOL showsMasterInLandscape; // applies to both landscape orientations (default YES)
 @property (nonatomic, assign, getter=isVertical) BOOL vertical; // if NO, split is horizontal, i.e. master above detail (default YES)
@@ -43,18 +44,21 @@ typedef enum _MGSplitViewDividerStyle {
 @property (nonatomic, assign) BOOL allowsDraggingDivider; // whether to let the user drag the divider to alter the split position (default NO).
 
 @property (nonatomic, copy) NSArray *viewControllers; // array of UIViewControllers; master is at index 0, detail is at index 1.
-@property (nonatomic, retain) IBOutlet UIViewController *masterViewController; // convenience.
-@property (nonatomic, retain) IBOutlet UIViewController *detailViewController; // convenience.
-@property (nonatomic, retain) MGSplitDividerView *dividerView; // the view which draws the divider/split between master and detail.
+@property (nonatomic, strong) IBOutlet UIViewController *masterViewController; // convenience.
+@property (nonatomic, strong) IBOutlet UIViewController *detailViewController; // convenience.
+@property (nonatomic, strong) MGSplitDividerView *dividerView; // the view which draws the divider/split between master and detail.
 @property (nonatomic, assign) MGSplitViewDividerStyle dividerStyle; // style (and behaviour) of the divider between master and detail.
 
 @property (nonatomic, readonly, getter=isLandscape) BOOL landscape; // returns YES if this view controller is in either of the two Landscape orientations, else NO.
+
+@property (nonatomic, readwrite) BOOL togglesMasterPopover; // default is NO.
 
 // Actions
 - (IBAction)toggleSplitOrientation:(id)sender; // toggles split axis between vertical (left/right; default) and horizontal (top/bottom).
 - (IBAction)toggleMasterBeforeDetail:(id)sender; // toggles position of master view relative to detail view.
 - (IBAction)toggleMasterView:(id)sender; // toggles display of the master view in the current orientation.
 - (IBAction)showMasterPopover:(id)sender; // shows the master view in a popover spawned from the provided barButtonItem, if it's currently hidden.
+- (IBAction)hideMasterPopover:(id)sender; // hides the master view in a popover spawned from the provided barButtonItem, if it's currently shown.
 - (void)notePopoverDismissed; // should rarely be needed, because you should not change the popover's delegate. If you must, then call this when it's dismissed.
 
 // Conveniences for you, because I care.
@@ -102,6 +106,11 @@ typedef enum _MGSplitViewDividerStyle {
 - (void)splitViewController:(MGSplitViewController*)svc 
 		  popoverController:(UIPopoverController*)pc 
   willPresentViewController:(UIViewController *)aViewController;
+
+// Called when a popover containing the master view is going to be hidden so the delegate can take action like showing other popovers.  This only happens if togglesMasterPopover is set to YES.
+- (void)splitViewController:(MGSplitViewController*)svc 
+		  popoverController:(UIPopoverController*)pc 
+  willDismissViewController:(UIViewController *)aViewController;
 
 // Called when the split orientation will change (from vertical to horizontal, or vice versa).
 - (void)splitViewController:(MGSplitViewController*)svc willChangeSplitOrientationToVertical:(BOOL)isVertical;
