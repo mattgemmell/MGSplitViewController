@@ -31,7 +31,6 @@
 - (void)dealloc
 {
 	self.splitViewController = nil;
-	[super dealloc];
 }
 
 
@@ -180,6 +179,26 @@
 #pragma mark -
 #pragma mark Interaction
 
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (self.delegate)
+    {
+        UITouch *touch = [touches anyObject];
+        if (touch.tapCount == 1)
+        {
+            if ([self.delegate respondsToSelector:@selector(dividerViewDidTap:)])
+            {
+                [self.delegate dividerViewDidTap:self];
+            }
+        }
+        
+        if ([self.delegate respondsToSelector:@selector(dividerViewDidEndTouch:)])
+        {
+            [self.delegate dividerViewDidEndTouch:self];
+        }
+    }    
+}
+
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -191,7 +210,8 @@
 		if (!splitViewController.masterBeforeDetail) {
 			offset = -offset;
 		}
-		splitViewController.splitPosition = splitViewController.splitPosition + offset;
+        
+        [splitViewController setSplitPosition:splitViewController.splitPosition + offset andResizeDetail:NO];
 	}
 }
 

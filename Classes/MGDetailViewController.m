@@ -6,19 +6,19 @@
 //  Copyright Instinctive Code 2010.
 //
 
-#import "DetailViewController.h"
-#import "RootViewController.h"
+#import "MGDetailViewController.h"
+#import "MGRootViewController.h"
 
 
-@interface DetailViewController ()
+@interface MGDetailViewController ()
 
-@property (nonatomic, retain) UIPopoverController *popoverController;
+@property (nonatomic, strong) UIPopoverController *popoverController;
 - (void)configureView;
 
 @end
 
 
-@implementation DetailViewController
+@implementation MGDetailViewController
 
 
 @synthesize toolbar, popoverController, detailItem, detailDescriptionLabel;
@@ -32,8 +32,7 @@
 - (void)setDetailItem:(id)newDetailItem
 {
     if (detailItem != newDetailItem) {
-        [detailItem release];
-        detailItem = [newDetailItem retain];
+        detailItem = newDetailItem;
         
         // Update the view.
         [self configureView];
@@ -72,7 +71,6 @@
 		NSMutableArray *items = [[toolbar items] mutableCopy];
 		[items insertObject:barButtonItem atIndex:0];
 		[toolbar setItems:items animated:YES];
-		[items release];
 	}
     self.popoverController = pc;
 }
@@ -89,7 +87,6 @@
 		NSMutableArray *items = [[toolbar items] mutableCopy];
 		[items removeObject:barButtonItem];
 		[toolbar setItems:items animated:YES];
-		[items release];
 	}
     self.popoverController = nil;
 }
@@ -172,15 +169,6 @@
 }
 
 
-- (void)dealloc
-{
-    [popoverController release];
-    [toolbar release];
-    
-    [detailItem release];
-    [detailDescriptionLabel release];
-    [super dealloc];
-}
 
 
 @end

@@ -6,11 +6,11 @@
 //  Copyright Instinctive Code 2010.
 //
 
-#import "RootViewController.h"
-#import "DetailViewController.h"
+#import "MGRootViewController.h"
+#import "MGDetailViewController.h"
 
 
-@implementation RootViewController
+@implementation MGRootViewController
 
 
 @synthesize detailViewController;
@@ -70,7 +70,7 @@
     // Dequeue or create a cell of the appropriate type.
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
@@ -95,11 +95,6 @@
 #pragma mark Memory management
 
 
-- (void)dealloc
-{
-    [detailViewController release];
-    [super dealloc];
-}
 
 
 @end
